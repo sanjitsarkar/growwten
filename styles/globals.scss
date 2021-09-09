@@ -8,6 +8,8 @@ $tertiaryColor:#F1B824;
 $tertiaryColor:#F1B824;
 html,
 body {
+
+  scroll-behavior: smooth;
   padding: 0;
   margin: 0;
   font-family: "Poppins",sans-serif;
@@ -15,10 +17,68 @@ body {
 }
 
 a {
+  cursor: pointer;
   color: inherit;
   text-decoration: none;
 }
 
 *,*::after,*::before {
   box-sizing: border-box;
+}
+button{
+
+}
+a.cta{
+ 
+  box-shadow: 0 0 1rem rgba($primaryColor,.3) !important;
+  transition: all .3s ease-in-out;
+  &:hover{
+    opacity: .8;
+  }
+}
+.card-list{
+  z-index: 1;
+}
+.card
+{
+  position: relative;
+  // background: #000;
+
+  &::after
+  {
+    z-index: 1;
+    position: absolute;
+    top:-.5rem;
+    left:.5rem;
+    background: rgba(255, 255, 255, 0.568);
+    content: "";
+    width: 97%;
+    height: 7%;
+    border-radius: .375rem;
+  }
+  &:hover &::after{
+    height: 0;
+}
+&-mission{
+  &::after{
+    background: rgba($secondaryColor, 0.568);
+ 
+
+  }
+}
+}
+
+a.active{
+  border-bottom: 2px solid !important;
+}
+a.nav-item{
+
+  border: 2px solid transparent;
+  padding-bottom: .3rem;
+  transition: all .3s ease-in-out;
+  &:hover,&:active,&:visited,&:focus{
+    opacity: .7;
+  border-bottom: 2px solid;
+  }
+  // &:
 }

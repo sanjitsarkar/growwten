@@ -4,6 +4,7 @@
 @tailwind utilities;
 html,
 body {
+  scroll-behavior: smooth;
   padding: 0;
   margin: 0;
   font-family: "Poppins",sans-serif;
@@ -11,6 +12,7 @@ body {
 }
 
 a {
+  cursor: pointer;
   color: inherit;
   text-decoration: none;
 }
@@ -18,5 +20,60 @@ a {
 *, *::after, *::before {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+}
+
+a.cta {
+  -webkit-box-shadow: 0 0 1rem rgba(243, 80, 32, 0.3) !important;
+          box-shadow: 0 0 1rem rgba(243, 80, 32, 0.3) !important;
+  -webkit-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+a.cta:hover {
+  opacity: .8;
+}
+
+.card-list {
+  z-index: 1;
+}
+
+.card {
+  position: relative;
+}
+
+.card::after {
+  z-index: 1;
+  position: absolute;
+  top: -.5rem;
+  left: .5rem;
+  background: rgba(255, 255, 255, 0.568);
+  content: "";
+  width: 97%;
+  height: 7%;
+  border-radius: .375rem;
+}
+
+.card:hover .card::after {
+  height: 0;
+}
+
+.card-mission::after {
+  background: rgba(6, 127, 238, 0.568);
+}
+
+a.active {
+  border-bottom: 2px solid !important;
+}
+
+a.nav-item {
+  border: 2px solid transparent;
+  padding-bottom: .3rem;
+  -webkit-transition: all .3s ease-in-out;
+  transition: all .3s ease-in-out;
+}
+
+a.nav-item:hover, a.nav-item:active, a.nav-item:visited, a.nav-item:focus {
+  opacity: .7;
+  border-bottom: 2px solid;
 }
 /*# sourceMappingURL=globals.css.map */
