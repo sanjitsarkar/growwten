@@ -1,16 +1,19 @@
-import { useState, useEffect, useContext } from "react";
-import { LoginModalContext } from "../lib/store/LoginModalStore";
+import { useState } from "react";
+import { auth } from "../lib/firebase";
+import Link from "next/link";
 import NavItem from "./NavItem";
-const Header = () => {
-  const [show, setShow] = useState(false);
+import { USER } from "../lib/const";
+const UserHeader = ({ user }) => {
   const [active, setActive] = useState("home");
-  const { showLoginModal, setShowLoginModal } = useContext(LoginModalContext);
-  useEffect(() => {
-    console.log(active);
-  }, [active]);
+  const [show, setShow] = useState(false);
+  const logout = async () => {
+    console.log("logout");
+    await auth.signOut();
+    console.log("logout suc");
+  };
   return (
     <div
-      id="header"
+      id="UserHeader"
       className="flex justify-between px-7 py-3 w-full items-center  bg-white md:px-10  shadow-lg md:shadow-none fixed top-0 left:0 z-50 "
     >
       <svg
@@ -36,8 +39,8 @@ const Header = () => {
       >
         <path d="M443.6,387.1L312.4,255.4l131.5-130c5.4-5.4,5.4-14.2,0-19.6l-37.4-37.6c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4  L256,197.8L124.9,68.3c-2.6-2.6-6.1-4-9.8-4c-3.7,0-7.2,1.5-9.8,4L68,105.9c-5.4,5.4-5.4,14.2,0,19.6l131.5,130L68.4,387.1  c-2.6,2.6-4.1,6.1-4.1,9.8c0,3.7,1.4,7.2,4.1,9.8l37.4,37.6c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1L256,313.1l130.7,131.1  c2.7,2.7,6.2,4.1,9.8,4.1c3.5,0,7.1-1.3,9.8-4.1l37.4-37.6c2.6-2.6,4.1-6.1,4.1-9.8C447.7,393.2,446.2,389.7,443.6,387.1z" />
       </svg>
-      <div className="">
-        {/* <div className="flex-col justify-center items-center gap-1"> */}
+
+      <div className="flex-col justify-center items-center gap-1">
         <svg
           className="w-4/6 md:w-aut0 mx-auto"
           width="99"
@@ -80,8 +83,9 @@ const Header = () => {
           </defs>
         </svg>
 
-        <h3 className="text-textDark font-md text-md text-center">GrowwTen</h3>
-        {/* </div> */}
+        <h3 className="text-textDark font-md text-md text-center">
+          <Link href="/">GrowwTen</Link>
+        </h3>
       </div>
       <div className="flex gap-7 items-center ">
         <div
@@ -90,36 +94,27 @@ const Header = () => {
           } md:text-textDark md:text-md  md:flex gap-5 py-9 md:py-0 md:relative md:top-0  absolute top-full left-0  place-items-center w-full bg-secondary  text-white md:bg-transparent shadow-lg md:shadow-none`}
         >
           <NavItem
+            type={USER}
             title="Home"
             _class="home"
             active={active}
-            to="#"
+            to="/"
             setActive={setActive}
             setShow={setShow}
           />
           <NavItem
-            title="Why us"
-            _class="why_us"
+            type={USER}
+            title={user.displayName}
+            _class="profile"
             active={active}
-            to="#why-us"
+            to="/profile"
             setActive={setActive}
             setShow={setShow}
           />
-          <NavItem
-            title="Our mission"
-            _class="our_mission"
-            active={active}
-            to="#our-mission"
-            setActive={setActive}
-            setShow={setShow}
-          />
-          <NavItem
-            title="Services"
-            _class="services"
-            active={active}
-            to="#services"
-            setActive={setActive}
-            setShow={setShow}
+          <img
+            src={user.photoURL}
+            alt={user.displayName}
+            className="w-10 rounded-full"
           />
           {/* <NavItem title="Home" _class="home" active={active} to="#"/>
                         <NavItem title="Home" _class="home" active={active} to="#"/>
@@ -129,10 +124,10 @@ const Header = () => {
         </div>
         <div className="flex  gap-3 text-sm">
           <button
-            onClick={() => setShowLoginModal(true)}
+            onClick={() => logout()}
             className="login py-2 px-5 bg-secondary rounded-sm text-white transition-all duration-200 hover:opacity-90"
           >
-            Login
+            Logout
           </button>
           {/* <button className="signup hidden login py-2 px-5 bg-primary rounded-sm text-white">Signup</button> */}
         </div>
@@ -141,4 +136,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default UserHeader;

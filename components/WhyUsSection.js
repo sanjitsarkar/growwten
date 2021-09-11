@@ -4,7 +4,7 @@ import Card from "./Card";
 // import Finance from './Images/finance.svg'
 const WhyUsSection = () => {
     return (
-        <div id="why-us" className="bg-darkBlue p-7 space-y-10 md:pb-20">
+        <div id="why-us" className="bg-darkBlue p-7 space-y-10 md:pb-20 md:py-16">
             <h1 className="text-center text-2xl text-white font-bold">Why us ?</h1>
             <div className="card-list flex flex-wrap gap-7">
 <Card title="Passive Income Stream" desc="This GrowwTen Company Model formulates a Sustainable passive income stream and opportunities to built finacial freedom of its">
