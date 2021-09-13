@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { LoginModalContext } from "../lib/store/LoginModalStore";
+import { UtilityContext } from "../lib/store/UtiltyStore";
 import NavItem from "./NavItem";
 const Header = () => {
   const [show, setShow] = useState(false);
   const [active, setActive] = useState("home");
-  const { showLoginModal, setShowLoginModal } = useContext(LoginModalContext);
+  const { showLoginModal, setShowLoginModal } = useContext(UtilityContext);
   useEffect(() => {
     console.log(active);
   }, [active]);

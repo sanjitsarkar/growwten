@@ -13,7 +13,9 @@ const UserBody = () => {
           title="Tasks"
           textColor="text-white"
           bgColor="bg-secondary"
-        ></Card>
+        >
+          <h1 className="text-white text-center text-3xl">0</h1>
+        </Card>
         <Card
           to="/teams"
           title="Teams"
@@ -21,7 +23,7 @@ const UserBody = () => {
           bgColor="bg-primary"
         >
           <h1 className="text-white text-center text-3xl">
-            {userInfo.teamCount}
+            {userInfo.teamCount && userInfo.teamCount - 1}
           </h1>
         </Card>
         <Card
@@ -29,7 +31,9 @@ const UserBody = () => {
           title="Wallet"
           textColor="text-white"
           bgColor="bg-tertiary"
-        ></Card>
+        >
+          <h1 className="text-white text-center text-3xl">0</h1>
+        </Card>
       </div>
     </div>
   );

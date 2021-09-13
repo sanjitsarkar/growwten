@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
@@ -6,8 +6,6 @@ import LoginModal from "../components/LoginModal";
 import OurMissionSection from "../components/OurMissionSection";
 import ServicesSection from "../components/ServicesSection";
 import WhyUsSection from "../components/WhyUsSection";
-import { LoginModalContext } from "../lib/store/LoginModalStore";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../lib/firebase";
 import Dashboard from "../components/dashboard";
 import _Loader from "../components/Loader";
@@ -23,8 +21,11 @@ import {
 import { CLIENT, USER } from "../lib/const";
 import { useRouter } from "next/dist/client/router";
 import ReferralCodeModal from "../components/ReferralCodeModal";
+import { UtilityContext } from "../lib/store/UtiltyStore";
+import { AuthContext } from "../lib/store/AuthStore";
 const Home = () => {
-  const [user, loading, error] = useAuthState(auth);
+  const [done, setDone] = useState(false);
+  const { user, userInfo, setUserInfo, loading } = useContext(AuthContext);
   const {
     showLoginModal,
     setShowLoginModal,
@@ -35,75 +36,96 @@ const Home = () => {
     referralCode,
     setReferralCode,
     setReferrerTeamNo,
-    referrerTeamNo
-  } = useContext(LoginModalContext);
+    referrerTeamNo,
+    referrerInfo,
+    setReferrerInfo,
+  } = useContext(UtilityContext);
 
-  const addUserInfo = async (type, user, referralCode) => {
-    console.log(user);
-    let collectionName = "";
-    if (type === USER) collectionName = "users";
-    else if (type === CLIENT) collectionName = "clients";
-    else collectionName = "admins";
-    const info = await getDoc(doc(db, collectionName, user.uid));
-    console.log("info", info);
-    if (!info.exists()) {
-      if (referralCode !== "") {
-        console.log("incrementss");
-        await updateDoc(doc(db, collectionName, referralCode), {
-          teamCount: increment(1),
-        });
-        console.log("incrementee");
-      }
-      let userInfo;
-      if(referrerTeamNo)
-       userInfo = {
-        type,
-        referralCode,
-        displayName: user.displayName,
-        email: user.email,
-        createdAt: serverTimestamp(),
-        photoURL: user.photoURL,
-        teamCount: 1,
-        teamNo: referrerTeamNo+1
-      };
-      else
-         userInfo = {
-           type,
-           referralCode,
-           displayName: user.displayName,
-           email: user.email,
-           createdAt: serverTimestamp(),
-           photoURL: user.photoURL,
-           teamCount: 1
-         };
-      await setDoc(doc(db, collectionName, user.uid), userInfo);
-    } else {
-      if (info.data().referralCode === "") {
-        setShowReferralCodeModal(true);
-      }
-    }
-  };
+  const addUserInfo = useCallback(
+    async (type, user, referralCode) => {
+      setDone(false);
+      console.log("called1");
+      let collectionName = "";
+      if (type === USER) collectionName = "users";
+      else if (type === CLIENT) collectionName = "clients";
+      else collectionName = "admins";
+      const info = await getDoc(doc(db, collectionName, user.uid));
 
-  if (loading)
+      if (!info.exists()) {
+        let userInfo;
+        if (referralCode !== "") {
+          const referrer = await getDoc(doc(db, collectionName, referralCode));
+          setReferrerInfo({ ...referrer.data(), id: referrer.id });
+
+          userInfo = {
+            type,
+            referralCode,
+            displayName: user.displayName,
+            email: user.email,
+            createdAt: serverTimestamp(),
+            photoURL: user.photoURL,
+            teamCount: 1,
+            teamNo: referrer.data().teamNo + 1,
+          };
+        } else {
+          userInfo = {
+            type,
+            referralCode,
+            displayName: user.displayName,
+            email: user.email,
+            createdAt: serverTimestamp(),
+            photoURL: user.photoURL,
+            teamCount: 1,
+          };
+        }
+
+        await setDoc(doc(db, collectionName, user.uid), userInfo);
+        if (referralCode !== "") {
+          await updateDoc(doc(db, collectionName, referralCode), {
+            teamCount: increment(1),
+          });
+        }
+        setDone(true);
+      }
+    },
+    [user]
+  );
+
+  useEffect(() => {
+    // console.log(user, "user", "uinfo", userInfo);
+    if (!loading && user && userInfo === "")
+      addUserInfo(loginAs, user, referralCode);
+  }, [user]);
+
+  // useEffect(() => {
+  //   if (!user && !userInfo) {
+  //     console.log("hello");
+  //   }
+  //   console.log("user", user, "userInfo", userInfo);
+  // }, [user, userInfo]);
+  useEffect(() => {
+    console.log(loading);
+  }, [loading]);
+
+  if ((!loading && user && userInfo) || done)
+    return <Dashboard user={userInfo} />;
+  if (!loading && !user)
     return (
-      <div className="h-screen w-screen grid place-items-center">
-        <_Loader />
-      </div>
+      <>
+        {showLoginModal && <LoginModal />}
+        <Header />
+        <HeroSection />
+        <WhyUsSection />
+        <OurMissionSection />
+        <ServicesSection />
+        <Footer />
+      </>
     );
-  if (user) {
-    addUserInfo(loginAs, user, referralCode);
-    return <Dashboard user={user} />;
-  }
+
   return (
-    <>
-      {showLoginModal && <LoginModal />}
-      <Header />
-      <HeroSection />
-      <WhyUsSection />
-      <OurMissionSection />
-      <ServicesSection />
-      <Footer />
-    </>
+    <div className="h-screen w-screen grid place-items-center">
+      <_Loader />
+    </div>
   );
 };
 

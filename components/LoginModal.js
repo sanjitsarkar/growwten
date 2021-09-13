@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { ADMIN, CLIENT, USER } from "../lib/const";
-import { LoginModalContext } from "../lib/store/LoginModalStore";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
 import _Loader from "./Loader";
+import { UtilityContext } from "../lib/store/UtiltyStore";
 const LoginModal = () => {
   const {
     showLoginModal,
@@ -17,8 +17,8 @@ const LoginModal = () => {
     referralCode,
     setReferralCode,
     setReferrerTeamNo,
-    referrerTeamNo
-  } = useContext(LoginModalContext);
+    referrerTeamNo,
+  } = useContext(UtilityContext);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const _referralCode = router.query.referralCode;
@@ -43,7 +43,8 @@ const LoginModal = () => {
         alert("Invalid ReferralCode");
         return;
       } else {
-        setReferrerTeamNo(isValidReferralCode.data().teamNo)
+        console.log("teamNo", isValidReferralCode.data().teamNo);
+        setReferrerTeamNo(isValidReferralCode.data().teamNo);
         if (isValidReferralCode.data().teamCount >= 10) {
           setLoading(false);
           alert("Team is already full");
@@ -51,7 +52,7 @@ const LoginModal = () => {
         }
       }
     }
-    console.log("helllo");
+    // console.log("helllo");
     const provider = new GoogleAuthProvider();
     // provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
     signInWithPopup(auth, provider)
@@ -83,8 +84,8 @@ const LoginModal = () => {
       });
   };
 
-  const loginWihFacebook = async () => {};
-  useEffect(() => {}, [loginAs]);
+  // const loginWihFacebook = async () => {};
+  // useEffect(() => {}, [loginAs]);
   const handleLoginTypeClick = (type) => {
     setLoginAs(type);
   };
@@ -137,15 +138,17 @@ const LoginModal = () => {
         </button>
       </div>
       {loginAs === USER && (
-        <input
-          className="bg-primary bg-opacity-20 px-3 py-1.5 mt-3 rounded-md placeholder-gray-500 outline-none"
-          type="text"
-          placeholder="Enter Referral Code"
-          value={referralCode}
-          onChange={(e) => {
-            setReferralCode(e.target.value);
-          }}
-        />
+        <div className="flex justify-center md:inline mt-6 md:mt-0">
+          <input
+            className="bg-primary bg-opacity-20 px-3 py-1.5 mt-3 rounded-md placeholder-gray-500 outline-none "
+            type="text"
+            placeholder="Enter Referral Code"
+            value={referralCode}
+            onChange={(e) => {
+              setReferralCode(e.target.value);
+            }}
+          />
+        </div>
       )}
       <div className="gap-5 justify-center mt-7 grid md:flex">
         {loading ? (

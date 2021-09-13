@@ -1,12 +1,11 @@
 import { doc, getDoc, increment, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
-import { route } from "next/dist/server/router";
 import { useContext, useEffect, useState } from "react";
 import _Loader from "../../components/Loader";
 import UserHeader from "../../components/UserHeader";
 import { db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
-import { LoginModalContext } from "../../lib/store/LoginModalStore";
+import { UtilityContext } from "../../lib/store/UtiltyStore";
 const Profile = () => {
   const {
     showLoginModal,
@@ -17,65 +16,82 @@ const Profile = () => {
     setShowReferralCodeModal,
     setReferrerTeamNo,
     referrerTeamNo,
-  } = useContext(LoginModalContext);
+    referrerInfo,
+    setReferrerInfo,
+  } = useContext(UtilityContext);
 
-  const { user, userInfo } = useContext(AuthContext);
+  const { loading, user, userInfo } = useContext(AuthContext);
   const router = useRouter();
+  useEffect(async () => {
+    if (userInfo.referralCode) {
+      // console.log(userInfo.referralCode);
+      const _data = await getDoc(doc(db, "users", userInfo.referralCode));
+      setReferrerInfo(_data.data());
+    }
+  }, [userInfo]);
   useEffect(() => {
-    console.log("referrerTeamNo", referrerTeamNo);
-    if (user === null) {
+    if ((!loading && user === null) || userInfo === null) {
       router.push("/");
     }
-  }, [user]);
-  const [loading, setLoading] = useState(false);
+  }, [userInfo, user, loading]);
+  useEffect(() => {
+    console.log("referrerInfo", referrerInfo);
+  }, [referrerInfo]);
+  const [loading1, setLoading1] = useState(false);
   // console.log(user);
   const [referralCode, setReferralCode] = useState(userInfo.referralCode);
+
   const addReferralCode = async () => {
     console.log("refe", referralCode);
     if (referralCode !== "") {
-      setLoading(true);
+      // console.log("referralCode3", referralCode);
+      setLoading1(true);
       const data = await getDoc(doc(db, "users", referralCode));
       console.log("data", data.data());
       if (data.exists()) {
-        await updateDoc(doc(db, "users", referralCode), {
-          teamCount: increment(1),
-        });
-        await updateDoc(doc(db, "users", userInfo.id), {
+        await updateDoc(doc(db, "users", user.uid), {
           referralCode,
           teamNo: data.data().teamNo + 1,
         });
+        await updateDoc(doc(db, "users", referralCode), {
+          teamCount: increment(1),
+        });
+
+        const _data = await getDoc(doc(db, "users", referralCode));
+        setReferrerInfo(_data.data());
         alert("added");
-        setLoading(false);
+        setLoading1(false);
       } else {
-        setLoading(false);
+        setLoading1(false);
         alert("Invalid Referral Code");
       }
     }
   };
-  return (
-    <>
-      <UserHeader user={userInfo} />4
-      <div className="flex mt-36 m-7 gap-4 justify-center">
-        <div className=" relative   rounded-sm shadow-2xl   p-7">
-          {/* <img
+
+  if (user && userInfo)
+    return (
+      <>
+        <UserHeader user={userInfo} />4
+        <div className="flex mt-36 m-7 gap-4 justify-center w-max md:w-auto md:mx-auto">
+          <div className=" relative   rounded-sm shadow-2xl   p-7 ">
+            {/* <img
           className=" absolute -top-10 left-1/2 transform -translate-x-1/2 "
           src={user.photoURL}
           alt=""
         /> */}
-          <div className="flex gap-4  py-2 items-center">
-            <h1 className="text-textDark">Profile name</h1>
-            <h3 className="text-gray-600 text-sm">{userInfo.displayName}</h3>
-          </div>
-          <div className="flex gap-4  py-2 items-center">
-            <h1 className="text-textDark">Email</h1>
-            <h3 className="text-gray-600 text-sm">{userInfo.email}</h3>
-          </div>
+            <div className="md:flex grid gap-4  py-2 items-center">
+              <h1 className="text-textDark">Profile name</h1>
+              <h3 className="text-gray-600 text-sm">{userInfo.displayName}</h3>
+            </div>
+            <div className="md:flex grid gap-4  py-2 items-center">
+              <h1 className="text-textDark">Email</h1>
+              <h3 className="text-gray-600 text-sm">{userInfo.email}</h3>
+            </div>
 
-          <div className="flex gap-4  py-2 items-center">
             {userInfo.referralCode === "" ? (
-              <>
+              <div className="md:flex grid gap-4  py-2 items-center">
                 <input
-                  className="bg-secondary bg-opacity-10 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none"
+                  className="w-full bg-secondary bg-opacity-10 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none"
                   type="text"
                   placeholder="Enter Referral Code"
                   value={referralCode}
@@ -83,7 +99,7 @@ const Profile = () => {
                     setReferralCode(e.target.value);
                   }}
                 />
-                {loading ? (
+                {loading1 ? (
                   <_Loader />
                 ) : (
                   <button
@@ -95,27 +111,40 @@ const Profile = () => {
                     Add
                   </button>
                 )}
-              </>
+              </div>
             ) : (
               <>
-                <input
-                  readOnly
-                  disabled
-                  className="bg-secondary bg-opacity-10 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none"
-                  type="text"
-                  placeholder="Enter Referral Code"
-                  value={referralCode}
-                />
+                <div className="md:flex grid gap-4  py-2 items-center">
+                  <input
+                    readOnly
+                    disabled
+                    className="w-full bg-secondary bg-opacity-10 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none bre"
+                    type="text"
+                    placeholder="Enter Referral Code"
+                    value={userInfo.referralCode}
+                  />
+                </div>
+
+                <div className="md:flex grid gap-4  py-2">
+                  <h1 className="text-textDark">Referrer name</h1>
+                  <h3 className="text-gray-600 text-sm w-max md:w-full break-words">
+                    {referrerInfo.displayName}
+                  </h3>
+                </div>
               </>
             )}
-          </div>
-          <div className="flex gap-4  py-2">
-            <h1 className="text-textDark">Referral link</h1>
-            <h3 className="text-gray-600 text-sm">{`https://growwten.com/referralCode=${userInfo.id}`}</h3>
+            <div className="md:flex grid gap-4  py-2">
+              <h1 className="text-textDark">Referral link</h1>
+              <h3 className="text-gray-600 text-sm w-max md:w-full break-words">{`https://growwten.com?referralCode=${userInfo.id}`}</h3>
+            </div>
           </div>
         </div>
-      </div>
-    </>
+      </>
+    );
+  return (
+    <div className="grid place-items-center h-screen">
+      <_Loader />
+    </div>
   );
 };
 

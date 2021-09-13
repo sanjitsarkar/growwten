@@ -1,16 +1,35 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { auth } from "../lib/firebase";
 import Link from "next/link";
 import NavItem from "./NavItem";
 import { USER } from "../lib/const";
-const UserHeader = ({ user }) => {
+import { UtilityContext } from "../lib/store/UtiltyStore";
+import { AuthContext } from "../lib/store/AuthStore";
+import { useRouter } from "next/dist/client/router";
+const UserHeader = () => {
   const [active, setActive] = useState("home");
   const [show, setShow] = useState(false);
+  const {
+    setShowLoginModal,
+    loginAs,
+    setLoginAs,
+    showReferralCodeModal,
+    setShowReferralCodeModal,
+    referralCode,
+    setReferralCode,
+    referrerTeamNo,
+    setReferrerTeamNo,
+  } = useContext(UtilityContext);
+  const { loading, user, userInfo, setUserInfo } = useContext(AuthContext);
+  const router = useRouter();
   const logout = async () => {
-    console.log("logout");
+    setUserInfo("");
     await auth.signOut();
     console.log("logout suc");
   };
+  useEffect(() => {
+    console.log("header", loading, "user", user, "userInfo", userInfo);
+  }, [loading, user, userInfo]);
   return (
     <div
       id="UserHeader"
