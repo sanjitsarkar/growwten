@@ -9,6 +9,7 @@ import { UtilityContext } from "../lib/store/UtiltyStore";
 import { useAlert } from "react-alert";
 const LoginModal = () => {
   const alert = useAlert();
+
   const {
     showLoginModal,
     setShowLoginModal,
@@ -24,6 +25,7 @@ const LoginModal = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const _referralCode = router.query.referralCode;
+
   useEffect(() => {
     if (_referralCode === undefined) {
       setReferralCode("");
@@ -140,7 +142,7 @@ const LoginModal = () => {
           Admin
         </button>
       </div>
-      {loginAs === USER && (
+      {loginAs === USER && _referralCode !== undefined && (
         <div className="flex justify-center md:inline mt-6 md:mt-0 md:mx-0">
           <input
             className="bg-primary bg-opacity-20 px-3 py-1.5 mt-3 rounded-md placeholder-gray-500 outline-none w-11/12"

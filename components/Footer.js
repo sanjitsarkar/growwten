@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="px-4 divide-y bg-coolGray-100 text-coolGray-800 grid place-content-center  md:block">
       <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
-        <div className="lg:w-1/3">
+        <div className="lg:w-1/3 mx-auto md:mx-0">
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-violet-600">
             <svg
               className="w-screen"
@@ -55,9 +55,9 @@ const Footer = () => {
             </span>
           </Link>
         </div>
-        <div className="grid grid-cols-2 text-sm gap-x-7 gap-y-8  lg:w-2/3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 text-sm gap-x-7 gap-y-8  lg:w-2/3 sm:grid-cols-4  mx-auto md:mx-0">
           <div className="space-y-3">
-            <h3 className="tracking-wide uppercase text-coolGray-900">
+            <h3 className="tracking-wide uppercase text-coolGray-900  mx-auto md:mx-0">
               Product
             </h3>
             <ul className="space-y-1">
@@ -89,8 +89,8 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className="space-y-3">
-            <div className="uppercase text-coolGray-900">Social media</div>
+          <div className="space-y-3 ">
+            <div className="uppercase text-coolGray-900 ">Social media</div>
             <div className="flex justify-start space-x-3">
               <Link
                 rel="noreferrer"

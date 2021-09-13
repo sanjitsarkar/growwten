@@ -26,6 +26,8 @@ import { AuthContext } from "../lib/store/AuthStore";
 const Home = () => {
   const [done, setDone] = useState(false);
   const { user, userInfo, setUserInfo, loading } = useContext(AuthContext);
+  const router = useRouter();
+  const _referralCode = router.query.referralCode;
   const {
     showLoginModal,
     setShowLoginModal,
@@ -40,7 +42,11 @@ const Home = () => {
     referrerInfo,
     setReferrerInfo,
   } = useContext(UtilityContext);
-
+  useEffect(() => {
+    if (_referralCode) {
+      setShowLoginModal(true);
+    }
+  }, [_referralCode]);
   const addUserInfo = useCallback(
     async (type, user, referralCode) => {
       setDone(false);

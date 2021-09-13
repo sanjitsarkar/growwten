@@ -1,6 +1,20 @@
 import SocialMediaIllustration from "./Images/growth.svg";
 import ArrowRight from "./Images/arrow.svg";
+import { UtilityContext } from "../lib/store/UtiltyStore";
+import { useContext } from "react";
 const HeroSection = () => {
+  const {
+    showLoginModal,
+    setShowLoginModal,
+    loginAs,
+    setLoginAs,
+    showReferralCodeModal,
+    setShowReferralCodeModal,
+    referralCode,
+    setReferralCode,
+    setReferrerTeamNo,
+    referrerTeamNo,
+  } = useContext(UtilityContext);
   return (
     <div
       id="hero"
@@ -683,6 +697,7 @@ const HeroSection = () => {
         </p>
         <a
           href="#"
+          onClick={() => setShowLoginModal(true)}
           className="cta inline-flex md:flex justify-center items-center gap-5 w-max px-6 py-2.5 bg-primary text-white text-lg rounded-md font-medium cursor-pointer transform transition duration-100 hover:scale-105 hover:shadow-2xl"
         >
           {/* <h2 className=""> */}
