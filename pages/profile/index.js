@@ -1,12 +1,14 @@
 import { doc, getDoc, increment, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import _Loader from "../../components/Loader";
 import UserHeader from "../../components/UserHeader";
 import { db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
 import { UtilityContext } from "../../lib/store/UtiltyStore";
 const Profile = () => {
+  const alert = useAlert();
   const {
     showLoginModal,
     setShowLoginModal,
@@ -35,19 +37,19 @@ const Profile = () => {
     }
   }, [userInfo, user, loading]);
   useEffect(() => {
-    console.log("referrerInfo", referrerInfo);
+    // console.log("referrerInfo", referrerInfo);
   }, [referrerInfo]);
   const [loading1, setLoading1] = useState(false);
   // console.log(user);
   const [referralCode, setReferralCode] = useState(userInfo.referralCode);
 
   const addReferralCode = async () => {
-    console.log("refe", referralCode);
+    // console.log("refe", referralCode);
     if (referralCode !== "") {
       // console.log("referralCode3", referralCode);
       setLoading1(true);
       const data = await getDoc(doc(db, "users", referralCode));
-      console.log("data", data.data());
+      // console.log("data", data.data());
       if (data.exists()) {
         await updateDoc(doc(db, "users", user.uid), {
           referralCode,
@@ -59,11 +61,11 @@ const Profile = () => {
 
         const _data = await getDoc(doc(db, "users", referralCode));
         setReferrerInfo(_data.data());
-        alert("added");
+        alert.show("Referral code added successfully");
         setLoading1(false);
       } else {
         setLoading1(false);
-        alert("Invalid Referral Code");
+        alert.error("Invalid referral code");
       }
     }
   };

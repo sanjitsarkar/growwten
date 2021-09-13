@@ -1,5 +1,6 @@
 module.exports = {
   reactStrictMode: true,
+
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
@@ -7,9 +8,9 @@ module.exports = {
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ["@svgr/webpack"]
+      use: ["@svgr/webpack"],
     });
 
     return config;
-  }
-}
+  },
+};

@@ -6,7 +6,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
 import _Loader from "./Loader";
 import { UtilityContext } from "../lib/store/UtiltyStore";
+import { useAlert } from "react-alert";
 const LoginModal = () => {
+  const alert = useAlert();
   const {
     showLoginModal,
     setShowLoginModal,
@@ -33,21 +35,22 @@ const LoginModal = () => {
   const loginWihGoogle = async () => {
     setLoading(true);
     if (loginAs === CLIENT || loginAs === ADMIN) {
-      alert("Login as client or admin is not available right now :(");
+      setLoading(false);
+      alert.info("Login as client or admin is not available right now :(");
       return;
     }
     if (referralCode !== "") {
       const isValidReferralCode = await getDoc(doc(db, "users", referralCode));
       if (!isValidReferralCode.exists()) {
         setLoading(false);
-        alert("Invalid ReferralCode");
+        alert.error("Invalid ReferralCode");
         return;
       } else {
         console.log("teamNo", isValidReferralCode.data().teamNo);
         setReferrerTeamNo(isValidReferralCode.data().teamNo);
         if (isValidReferralCode.data().teamCount >= 10) {
           setLoading(false);
-          alert("Team is already full");
+          alert.error("Team is already full");
           return;
         }
       }
@@ -138,9 +141,9 @@ const LoginModal = () => {
         </button>
       </div>
       {loginAs === USER && (
-        <div className="flex justify-center md:inline mt-6 md:mt-0">
+        <div className="flex justify-center md:inline mt-6 md:mt-0 md:mx-0">
           <input
-            className="bg-primary bg-opacity-20 px-3 py-1.5 mt-3 rounded-md placeholder-gray-500 outline-none "
+            className="bg-primary bg-opacity-20 px-3 py-1.5 mt-3 rounded-md placeholder-gray-500 outline-none w-11/12"
             type="text"
             placeholder="Enter Referral Code"
             value={referralCode}

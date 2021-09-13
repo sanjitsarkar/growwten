@@ -39,9 +39,27 @@ a.cta {
 .card-list {
   z-index: 1;
 }
-.card {
+
+.card.card-mission {
   position: relative;
-  // background: #000;
+
+  &::after {
+    z-index: 1;
+    position: absolute;
+    top: -0.5rem;
+    left: 0.5rem;
+    background: rgba(255, 255, 255, 0.568);
+    content: "";
+    width: 97%;
+    height: 7%;
+    border-radius: 0.375rem;
+  }
+  &::after {
+    background: rgba($secondaryColor, 0.568);
+  }
+}
+.card.fancy {
+  position: relative;
 
   &::after {
     z-index: 1;
@@ -57,13 +75,12 @@ a.cta {
   &:hover &::after {
     height: 0;
   }
-  &-mission {
-    &::after {
-      background: rgba($secondaryColor, 0.568);
-    }
+}
+.card.card-services {
+  &::after {
+    height: 4%;
   }
 }
-
 a.active {
   border-bottom: 2px solid !important;
 }
