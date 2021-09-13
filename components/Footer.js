@@ -3,7 +3,11 @@ const Footer = () => {
     <footer className="px-4 divide-y bg-coolGray-100 text-coolGray-800 grid place-content-center  md:block">
       <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:flex-row lg:space-y-0">
         <div className="lg:w-1/3">
+<<<<<<< HEAD
           <Link
+=======
+          <a
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
             href="/"
             className="flex justify-center space-x-3 lg:justify-start"
           >
@@ -49,7 +53,11 @@ const Footer = () => {
               </svg>
             </div>
             <span className="self-center text-2xl font-semibold">GrowwTen</span>
+<<<<<<< HEAD
           </Link>
+=======
+          </a>
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
         </div>
         <div className="grid grid-cols-2 text-sm gap-x-7 gap-y-8  lg:w-2/3 sm:grid-cols-4">
           <div className="space-y-3">
@@ -58,6 +66,7 @@ const Footer = () => {
             </h3>
             <ul className="space-y-1">
               <li>
+<<<<<<< HEAD
                 <Link href="#">Features</Link>
               </li>
               <li>
@@ -68,6 +77,18 @@ const Footer = () => {
               </li>
               <li>
                 <Link href="#">FAQ</Link>
+=======
+                <a href="#">Features</a>
+              </li>
+              <li>
+                <a href="#">Services</a>
+              </li>
+              <li>
+                <a href="#">Pricing</a>
+              </li>
+              <li>
+                <a href="#">FAQ</a>
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
               </li>
             </ul>
           </div>
@@ -77,10 +98,17 @@ const Footer = () => {
             </h3>
             <ul className="space-y-1">
               <li>
+<<<<<<< HEAD
                 <Link href="#">Privacy</Link>
               </li>
               <li>
                 <Link href="#">Terms of Service</Link>
+=======
+                <a href="#">Privacy</a>
+              </li>
+              <li>
+                <a href="#">Terms of Service</a>
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
               </li>
             </ul>
           </div>
@@ -91,7 +119,10 @@ const Footer = () => {
               <a
                 href="https://fb.com/GrowwTen"
                 title="Facebook"
+<<<<<<< HEAD
                 rel="noreferrer"
+=======
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
                 target="_blank"
                 className="flex items-center p-1"
               >
@@ -108,7 +139,10 @@ const Footer = () => {
                 href="https://twitter.com/GrowwTen"
                 title="Twitter"
                 target="_blank"
+<<<<<<< HEAD
                 rel="noreferrer"
+=======
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
                 className="flex items-center p-1"
               >
                 <svg
@@ -124,7 +158,10 @@ const Footer = () => {
                 href="https://instagram.com/GrowwTen"
                 title="Instagram"
                 className="flex items-center p-1"
+<<<<<<< HEAD
                 rel="noreferrer"
+=======
+>>>>>>> c91cf641e048b613ddf688e77941cbee1ccddcc5
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
