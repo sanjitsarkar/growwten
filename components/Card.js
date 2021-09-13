@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const Card = ({
   children,
+  type = "fancy",
   to = "/",
   reversed,
   title,
@@ -12,7 +13,7 @@ const Card = ({
   return (
     <Link href={to}>
       <div
-        className={`card relative md:flex-1 p-7 space-y-2 ${bgColor} shadow-lg rounded-md cursor-pointer transform scale-95 transition duration-300 hover:scale-100 hover:shadow-2xl`}
+        className={`card relative md:flex-1 p-7 space-y-2 ${bgColor} ${type} shadow-lg rounded-md cursor-pointer transform scale-95 transition duration-300 hover:scale-100 hover:shadow-2xl`}
       >
         {children}
 
