@@ -125,10 +125,18 @@ const Home = () => {
             name="description"
             content="Your one stop solution for social media growth and earning."
           />
+          <meta
+            property="og:image"
+            content="https://i.ibb.co/yFDfbBp/growth.png"
+          />
           <meta property="og:title" content="GrowwTen - Grow with us" />
           <meta
             property="og:description"
             content="A Digital Marketing Company for Social Media Influencers and Content Creators."
+          />
+          <meta
+            name="google-site-verification"
+            content="tDPbEgdbFXKcxWhpM59iMblIRfVa-RQvSXuuiEFU1Vk"
           />
           <meta name="robots" content="index, follow" />
           <link rel="canonical" href="https://sanjitsarkar.tk/" />
