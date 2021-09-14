@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import Head from "next/head";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import HeroSection from "../components/HeroSection";
@@ -119,37 +118,7 @@ const Home = () => {
   if (!loading && !user)
     return (
       <>
-        <Head>
-          <title>GrowwTen - Grow with us </title>
-          <meta
-            name="description"
-            content="Your one stop solution for social media growth and earning."
-          />
-          <meta
-            property="og:image"
-            content="https://i.ibb.co/yFDfbBp/growth.png"
-          />
-          <meta property="og:title" content="GrowwTen - Grow with us" />
-          <meta
-            property="og:description"
-            content="A Digital Marketing Company for Social Media Influencers and Content Creators."
-          />
-          <meta
-            name="google-site-verification"
-            content="tDPbEgdbFXKcxWhpM59iMblIRfVa-RQvSXuuiEFU1Vk"
-          />
-          <meta name="robots" content="index, follow" />
-          <link rel="canonical" href="https://sanjitsarkar.tk/" />
-          <link rel="canonical" href="https://sanjitsarkar.vercel.app/" />
-
-          <meta
-            name="author"
-            content="Rajibul Islam, Sanjit Sarkar, Najrul Islam"
-          />
-          <meta property="og:url" content="https://growwten.com" />
-          <meta property="og:type" content="website" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+    
         {showLoginModal && <LoginModal />}
         <Header />
         <HeroSection />
