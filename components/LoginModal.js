@@ -59,15 +59,18 @@ const LoginModal = () => {
     }
     // console.log("helllo");
     const provider = new GoogleAuthProvider();
-    // provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
+    provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
     signInWithPopup(auth, provider)
       .then(async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-        // The signed-in user info.
-        setLoading(false);
+        const token = credential.accessToken;
         const user = result.user;
+        console.log("token", token);
+        console.log("user", user);
+        sessionStorage.setItem("ytc-access-token", token);
+        sessionStorage.setItem("ytc-user", JSON.stringify(user));
+        setLoading(false);
         setShowLoginModal(false);
         // console.log(user);
 

@@ -118,7 +118,6 @@ const Home = () => {
   if (!loading && !user)
     return (
       <>
-    
         {showLoginModal && <LoginModal />}
         <Header />
         <HeroSection />
