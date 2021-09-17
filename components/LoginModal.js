@@ -36,9 +36,9 @@ const LoginModal = () => {
   }, [_referralCode]);
   const loginWihGoogle = async () => {
     setLoading(true);
-    if (loginAs === CLIENT || loginAs === ADMIN) {
+    if (loginAs === ADMIN) {
       setLoading(false);
-      alert.info("Login as client or admin is not available right now :(");
+      alert.info("Login as admin is not available right now :(");
       return;
     }
     if (referralCode !== "") {
@@ -59,11 +59,13 @@ const LoginModal = () => {
     }
     // console.log("helllo");
     const provider = new GoogleAuthProvider();
-    provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
+    if (loginAs === USER)
+      provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
     signInWithPopup(auth, provider)
       .then(async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
+
         const token = credential.accessToken;
         const user = result.user;
         console.log("token", token);
@@ -94,7 +96,12 @@ const LoginModal = () => {
 
   // const loginWihFacebook = async () => {};
   // useEffect(() => {}, [loginAs]);
+  useEffect(() => {
+    window.localStorage.setItem("type", loginAs);
+    
+  }, []);
   const handleLoginTypeClick = (type) => {
+    window.localStorage.setItem("type", type);
     setLoginAs(type);
   };
 

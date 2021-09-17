@@ -1,10 +1,12 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
   increment,
+  limit,
   query,
   setDoc,
   updateDoc,
@@ -22,12 +24,19 @@ const Tasks = () => {
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [task, setTask] = useState("");
+  const [type, setType] = useState("");
+  useEffect(() => {
+    setType(window.localStorage.getItem("type"));
+  }, [type]);
+  // const [_window, _setWindow] = useState("");
   const router = useRouter();
   useEffect(() => {
     if ((!loading && user === null) || userInfo === null) {
       router.push("/");
     }
   }, [userInfo, user, loading]);
+
   const _isSubscribed = async (channelId) => {
     try {
       const token = window.sessionStorage.getItem("ytc-access-token");
@@ -73,73 +82,134 @@ const Tasks = () => {
     const data = await getDoc(
       doc(db, "users", `${userInfo.id}/tasks/${taskId}`)
     );
-    console.log("doneee", data.exists());
+    // console.log("doneee", data.exists());
     return data.exists();
   };
-  const getTasks = async () => {
+
+  const addTask = async () => {
+    setLoading2(true);
+    await addDoc(doc(db, "tasks"), {
+      task,
+    });
+  };
+  const getClientTasks = async () => {
+    // console.log("clled client");
     setLoading1(true);
     const dataSnap = await getDocs(
-      query(collection(db, "tasks"), where("isCompleted", "==", false))
+      query(
+        collection(db, "tasks"),
+        where("clientId", "==", userInfo.id),
+        limit(10)
+      )
+    );
+    // console.log("clientTasks", dataSnap.docs.length);
+    setLoading1(false);
+    dataSnap.docs.forEach((_doc) => {
+      setTasks([...tasks, _doc.data()]);
+    });
+  };
+  const getUserTasks = async () => {
+    // let _tasks = [];
+    // console.log("client");
+    setLoading1(true);
+    const dataSnap = await getDocs(
+      query(
+        collection(db, "tasks"),
+        where("isCompleted", "==", false),
+        limit(10)
+      )
     );
 
-    // console.log("dataSnap", dataSnap);
+    // console.log("dataSnapSSSS", dataSnap.docs);
 
-    dataSnap.docs.forEach(async (_doc) => {
-      const urlArray = _doc.data().youtubeUrl.split("/");
-      const channelId = urlArray[urlArray.length - 1];
-      console.log("channelId", channelId);
-      const _data = await isTaskDone(_doc.id);
-      if (!_data) {
-        console.log("_data", _data);
+    Promise.all(
+      dataSnap.docs.map(async (_doc) => {
+        const urlArray = _doc.data().youtubeUrl.split("/");
+        const channelId = urlArray[urlArray.length - 1];
+        console.log("doc", _doc.data());
+        const _data = await isTaskDone(_doc.id);
         let isSubscribed = await _isSubscribed(channelId);
-        if (isSubscribed) {
-          isSubscribed = "Subscribed";
-          await updateDoc(doc(db,"tasks",_doc.id),{
-            completed:increment(1)
-          })
-          await setDoc(doc(db, `users/${userInfo.id}/tasks`, _doc.id), {
-            status: true,
-          });
-        } else {
-          isSubscribed = "Not Subscribed";
-          console.log("isSubscribed", isSubscribed);
-          console.log("...doc", _doc);
+        console.log("isSubscribe", isSubscribed, "channelId", channelId);
+        if (!isSubscribed && _data) {
+          console.log("_data and not subscibed", _data);
 
-          setTasks([...tasks, { ..._doc.data(), isSubscribed }]);
+          await deleteDoc(doc(db, `users/${userInfo.id}/tasks`, _doc.id));
+          await updateDoc(doc(db, "tasks", _doc.id), {
+            completed: increment(-1),
+          });
+        } else if (!_data) {
+          if (isSubscribed) {
+            await setDoc(doc(db, `users/${userInfo.id}/tasks`, _doc.id), {
+              status: true,
+            });
+            await updateDoc(doc(db, "tasks", _doc.id), {
+              completed: increment(1),
+            });
+          } else {
+          }
         }
-      }
+        return { ..._doc.data(), isSubscribed };
+      })
+    ).then((__data) => {
+      setTasks(__data);
+      setLoading1(false);
     });
-    setLoading1(false);
   };
   useEffect(() => {
-    if (userInfo) getTasks();
-  }, [userInfo]);
-  useEffect(() => {
-    console.log("Taskssss", tasks);
-  }, [tasks]);
+    if (type === "USER") getUserTasks();
+    if (type === "CLIENT" && userInfo) getClientTasks();
+  }, [type, userInfo]);
+  // useEffect(() => {
+  //   console.log("Taskssss", tasks);
+  // }, [tasks]);
+
+  // const openWindow = (url) => {
+  //   const __window = window.open(url, "_blank", true, true, true, 300, 500);
+  //   _setWindow(__window);
+  // };
+  // useEffect(() => {
+  //   console.log("__window", _window.closed);
+  // }, [_window.closed]);
+
   if (user && userInfo)
     return (
       <>
         <UserHeader />
         <div className="flex mt-36 m-7 gap-4 justify-center w-max md:w-auto md:mx-auto">
           <div className=" relative   rounded-sm shadow-2xl   p-7">
+            {type === "CLIENT" && (
+              <button
+                className="text-white bg-darkBlue    
+         py-1.5 px-16 rounded-md"
+              >
+                Add Task
+              </button>
+            )}
             <div className="flex justify-between items-center mb-6">
               <h1 className="">Pending Tasks</h1>
-              <button
-                className="px-2 py-1 rounded-md bg-secondary text-white shadow-xl"
-                onClick={() => {
-                  setTasks([]);
-                  getTasks();
-                }}
-              >
-                Refresh Tasks
-              </button>
+              {type === "USER" && (
+                <button
+                  className="px-2 py-1 rounded-md bg-secondary text-white shadow-xl"
+                  onClick={() => {
+                    setTasks([]);
+                    getUserTasks();
+                  }}
+                >
+                  Refresh Tasks
+                </button>
+              )}
             </div>
             <table className="border-2">
               <thead>
                 <tr>
                   <th>Task Type</th>
                   <th>Channel URL</th>
+                  {type === "CLIENT" && (
+                    <>
+                      <th>Completed</th>
+                      <th>Target</th>
+                    </>
+                  )}
                   <th>Status</th>
                 </tr>
               </thead>
@@ -157,19 +227,32 @@ const Tasks = () => {
                   </tr>
                 )}
                 {tasks &&
-                  tasks.map((task) => (
-                    <tr key={task.youtubeUrl}>
+                  tasks.map((task, index) => (
+                    <tr key={index}>
                       <td>{task.type}</td>
                       <td className="cursor-pointer">
                         <a
-                          target="_blank"
                           rel="noreferrer"
                           href={task.youtubeUrl}
+                          target="_blank"
                         >
-                          {task.youtubeUrl}
+                          {type === "CLIENT" ? task.youtubeUrl : "Subscribe"}
                         </a>
                       </td>
-                      <td>{task.isSubscribed}</td>
+                      {type === "USER" && (
+                        <td>
+                          {task.isSubscribed ? "Subscribed" : "Not Subscribed"}
+                        </td>
+                      )}
+                      {type == "CLIENT" && (
+                        <>
+                          <td>{task.completed}</td>
+                          <td>{task.target}</td>
+                          <td>
+                            {task.isCompleted ? "Completed" : "Not Completed"}
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
               </tbody>

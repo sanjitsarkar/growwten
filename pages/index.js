@@ -59,6 +59,18 @@ const Home = () => {
 
       if (!info.exists()) {
         let userInfo;
+        if (loginAs === CLIENT) {
+          userInfo = {
+            type,
+            displayName: user.displayName,
+            email: user.email,
+            createdAt: serverTimestamp(),
+            photoURL: user.photoURL,
+            tasks: 0,
+          };
+          await setDoc(doc(db, collectionName, user.uid), userInfo);
+          return;
+        }
         if (referralCode !== "") {
           const referrer = await getDoc(doc(db, collectionName, referralCode));
           setReferrerInfo({ ...referrer.data(), id: referrer.id });

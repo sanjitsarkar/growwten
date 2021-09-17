@@ -26,6 +26,7 @@ const UserHeader = () => {
     setUserInfo("");
     sessionStorage.removeItem("ytc-access-token");
     sessionStorage.removeItem("ytc-user");
+    localStorage.removeItem("type");
     await auth.signOut();
     console.log("logout suc");
   };

@@ -89,7 +89,9 @@ const Profile = () => {
               <h1 className="text-textDark">Email</h1>
               <h3 className="text-gray-600 text-sm">{userInfo.email}</h3>
             </div>
-
+           {
+             userInfo.type==="USER" &&
+             <>
             {userInfo.referralCode === "" ? (
               <div className="md:flex grid gap-4  py-2 items-center">
                 <input
@@ -139,6 +141,8 @@ const Profile = () => {
               <h1 className="text-textDark">Referral link</h1>
               <h3 className="text-gray-600 text-sm w-max md:w-full break-words">{`https://growwten.com?referralCode=${userInfo.id}`}</h3>
             </div>
+            </>
+}
           </div>
         </div>
       </>

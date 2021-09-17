@@ -11,6 +11,9 @@ const Wallet = () => {
     if ((!loading && user === null) || userInfo === null) {
       router.push("/");
     }
+    if (userInfo && userInfo.type === "CLIENT") {
+      router.push("/");
+    }
   }, [userInfo, user, loading]);
   if (user && userInfo) return <div>Wallet</div>;
   return (

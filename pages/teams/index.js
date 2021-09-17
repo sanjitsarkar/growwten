@@ -15,6 +15,9 @@ const Teams = () => {
     if ((!loading && user === null) || userInfo === null) {
       router.push("/");
     }
+    if (userInfo && userInfo.type === "CLIENT") {
+      router.push("/");
+    }
   }, [userInfo, user, loading]);
   const getTeams = async () => {
     setLoading1(true);
