@@ -232,6 +232,7 @@ const Tasks = () => {
                   isSubsribed={task.isSubscribed}
                   img="https://avatars.githubusercontent.com/u/23244943?v=4"
                   youtubeUrl={task.youtubeUrl}
+                  key={task.youtubeUrl}
                 />
               ))}
           </div>

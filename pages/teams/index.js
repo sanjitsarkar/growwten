@@ -89,6 +89,7 @@ const Teams = () => {
                   mem={mem.data()}
                   id={mem.id}
                   getTeamInfo={getTeamInfo}
+                  key={mem.id}
                 />
               ))}
             {/* <table className="border-2">
@@ -158,6 +159,7 @@ const Teams = () => {
                         mem={mem.data()}
                         id={mem.id}
                         getTeamInfo={getTeamInfo}
+                        key={mem.id}
                       />
                     ))}
                 </div>

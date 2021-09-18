@@ -4,7 +4,10 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 const TeamCard = ({ mem, id, getTeamInfo }) => {
   console.log("mem", mem);
   return (
-    <div className="rounded-lg bg-textDark shadow-2xl px-6 py-6 text-white md:w-auto lg:flex md:gap-6 gap-6 items-center w-full grid place-items-center ">
+    <div
+      className="rounded-lg bg-textDark shadow-2xl px-6 py-6 text-white md:w-auto lg:flex md:gap-6 gap-6 items-center w-full grid place-items-center "
+      key={id}
+    >
       <LazyLoadImage
         src={mem.photoURL}
         alt={mem.displayName}
@@ -19,11 +22,11 @@ const TeamCard = ({ mem, id, getTeamInfo }) => {
       </div>
       <div className="flex justify-between gap-6">
         <div className="grid place-items-center gap-1">
-          <img src={Team.src} alt="" srcset="" />
+          <img src={Team.src} />
           <h4>{mem.teamCount} Members</h4>
         </div>
         <div className="grid place-items-center gap-1">
-          <img src={Label.src} alt="" srcset="" />
+          <img src={Label.src} />
           <h4>Team {mem.teamNo}</h4>
         </div>
       </div>

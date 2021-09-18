@@ -19,7 +19,10 @@ const TaskCard = ({ youtubeUrl, isSubsribed }) => {
   }, []);
   console.log(YoutubeImage);
   return (
-    <div className="rounded-lg bg-white shadow-2xl px-6 py-6 grid gap-7 md:w-auto w-screen">
+    <div
+      className="rounded-lg bg-white shadow-2xl px-6 py-6 grid gap-7 md:w-auto w-screen"
+      key={youtubeUrl}
+    >
       <div className="flex gap-1">
         <img src={YoutubeImage.src} alt={channelName} />
         <div className="">
