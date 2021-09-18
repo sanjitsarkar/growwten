@@ -1,7 +1,8 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import _Loader from "../../components/Loader";
+import TeamCard from "../../components/TeamCard";
 import UserHeader from "../../components/UserHeader";
 import { db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
@@ -10,6 +11,7 @@ const Teams = () => {
   const [teamMems, setTeamMems] = useState([]);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
+  const teamRef = useRef();
   const router = useRouter();
   useEffect(() => {
     if ((!loading && user === null) || userInfo === null) {
@@ -24,15 +26,15 @@ const Teams = () => {
     const dataSnap = await getDocs(
       query(collection(db, "users"), where("referralCode", "==", userInfo.id))
     );
-    setLoading1(false);
     setTeamMems(dataSnap.docs);
+    setLoading1(false);
   };
   useEffect(() => {
     if (userInfo.id) getTeams();
   }, [userInfo]);
 
   const getTeamInfo = async (name, id) => {
-    setTeamMems1("");
+    setTeamMems1([]);
     setName("");
     setName(name);
     setLoading2(true);
@@ -40,6 +42,9 @@ const Teams = () => {
       query(collection(db, "users"), where("referralCode", "==", id))
     );
     setLoading2(false);
+    teamRef?.current?.scrollIntoView({
+      behavior: "smooth",
+    });
     setTeamMems1(dataSnap.docs);
   };
   const [name, setName] = useState("");
@@ -50,10 +55,43 @@ const Teams = () => {
     return (
       <>
         <UserHeader user={userInfo} />
-        <div className="flex mt-36 m-7 gap-4 justify-center w-max md:w-auto md:mx-auto">
-          <div className=" relative   rounded-sm shadow-2xl   p-7">
-            <h1 className="mb-2">Team Members</h1>
-            <table className="border-2">
+        <div className="grid px-7 mt-32  gap-4  w-full ">
+          <div className="flex justify-between items-center mb-4  w-full ">
+            <div className="px-3 py-2 rounded-md bg-white text-textDark shadow-2xl border border-textDark  ">
+              Team Members
+            </div>
+            <button
+              className="px-3 py-2 rounded-md bg-textDark text-white shadow-2xl border border-textDark  "
+              onClick={() => {
+                setTeamMems([]);
+                getTeams();
+              }}
+            >
+              Refresh Tasks
+            </button>
+          </div>
+          {/* <h1 className="mb-2">Team Members</h1> */}
+          <div className="flex flex-wrap gap-3 w-full">
+            {loading1 && (
+              <div className="mx-auto">
+                <_Loader />
+              </div>
+            )}
+            {!loading1 && !teamMems.length && (
+              <h1 className="text-textDark text-center">
+                {" "}
+                No team member available
+              </h1>
+            )}
+            {teamMems &&
+              teamMems.map((mem) => (
+                <TeamCard
+                  mem={mem.data()}
+                  id={mem.id}
+                  getTeamInfo={getTeamInfo}
+                />
+              ))}
+            {/* <table className="border-2">
               <thead>
                 <tr>
                   <th>Profile Image</th>
@@ -96,11 +134,34 @@ const Teams = () => {
                     </tr>
                   ))}
               </tbody>
-            </table>
+            </table> */}
             {name && (
               <>
-                <h1 className="mt-10 mb-2">Teams Member of {name}</h1>
-                <table className="border-2">
+                <h1 className="mt-10 mb-2 text-center px-3 py-2 rounded-md bg-white text-textDark shadow-2xl border border-textDark">
+                  Team Members of <span className="text-secondary">{name}</span>
+                </h1>
+                <div ref={teamRef} className="flex flex-wrap gap-3 w-full">
+                  {loading2 && (
+                    <div className="mx-auto">
+                      {" "}
+                      <_Loader />{" "}
+                    </div>
+                  )}
+                  {!teamMems1.length && (
+                    <h1 className="text-center text-textDark mx-auto">
+                      No team member available
+                    </h1>
+                  )}
+                  {teamMems1 &&
+                    teamMems1.map((mem) => (
+                      <TeamCard
+                        mem={mem.data()}
+                        id={mem.id}
+                        getTeamInfo={getTeamInfo}
+                      />
+                    ))}
+                </div>
+                {/* <table className="border-2">
                   <thead>
                     <tr>
                       <th>Profile Image</th>
@@ -143,7 +204,7 @@ const Teams = () => {
                         </tr>
                       ))}
                   </tbody>
-                </table>
+                </table> */}
               </>
             )}
           </div>

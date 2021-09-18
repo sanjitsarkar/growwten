@@ -7,7 +7,7 @@ import { UtilityContext } from "../lib/store/UtiltyStore";
 import { AuthContext } from "../lib/store/AuthStore";
 import { useRouter } from "next/dist/client/router";
 const UserHeader = () => {
-  const [active, setActive] = useState("home");
+  const [active, setActive] = useState("");
   const [show, setShow] = useState(false);
   const {
     setShowLoginModal,

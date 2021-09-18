@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@svgr/webpack": "^5.5.0",
     "axios": "^0.21.4",
     "firebase": "^9.0.2",
     "googleapis": "^85.0.0",
@@ -19,7 +18,9 @@
     "react-alert-template-basic": "^1.0.2",
     "react-dom": "17.0.2",
     "react-firebase-hooks": "^3.0.4",
-    "react-loader-spinner": "^4.0.0"
+    "react-lazy-load-image-component": "^1.5.1",
+    "react-loader-spinner": "^4.0.0",
+    "react-loading-skeleton": "^2.2.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.3.4",

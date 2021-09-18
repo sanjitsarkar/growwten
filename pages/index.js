@@ -20,7 +20,6 @@ import {
 } from "firebase/firestore";
 import { CLIENT, USER } from "../lib/const";
 import { useRouter } from "next/dist/client/router";
-import ReferralCodeModal from "../components/ReferralCodeModal";
 import { UtilityContext } from "../lib/store/UtiltyStore";
 import { AuthContext } from "../lib/store/AuthStore";
 const Home = () => {

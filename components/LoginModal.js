@@ -98,7 +98,6 @@ const LoginModal = () => {
   // useEffect(() => {}, [loginAs]);
   useEffect(() => {
     window.localStorage.setItem("type", loginAs);
-    
   }, []);
   const handleLoginTypeClick = (type) => {
     window.localStorage.setItem("type", type);

@@ -14,18 +14,22 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
+import AddTaskModal from "../../components/AddTaskModal";
 import _Loader from "../../components/Loader";
+import TaskCard from "../../components/TaskCard";
 import UserHeader from "../../components/UserHeader";
 import request from "../../lib/api";
 import { db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
+import { UtilityContext } from "../../lib/store/UtiltyStore";
 const Tasks = () => {
   const { loading, user, userInfo } = useContext(AuthContext);
+  const { showAddTaskModal, setShowAddTaskModal } = useContext(UtilityContext);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [task, setTask] = useState("");
   const [type, setType] = useState("");
+  const [taskMode, setTaskMode] = useState("PENDING");
   useEffect(() => {
     setType(window.localStorage.getItem("type"));
   }, [type]);
@@ -86,12 +90,6 @@ const Tasks = () => {
     return data.exists();
   };
 
-  const addTask = async () => {
-    setLoading2(true);
-    await addDoc(doc(db, "tasks"), {
-      task,
-    });
-  };
   const getClientTasks = async () => {
     // console.log("clled client");
     setLoading1(true);
@@ -151,17 +149,17 @@ const Tasks = () => {
         return { ..._doc.data(), isSubscribed };
       })
     ).then((__data) => {
-      setTasks(__data);
+      if (taskMode === "PENDING") {
+        setTasks(() => __data.filter((_task) => _task.isSubscribed === 0));
+      } else setTasks(() => __data.filter((_task) => _task.isSubscribed === 1));
+
       setLoading1(false);
     });
   };
   useEffect(() => {
     if (type === "USER") getUserTasks();
     if (type === "CLIENT" && userInfo) getClientTasks();
-  }, [type, userInfo]);
-  // useEffect(() => {
-  //   console.log("Taskssss", tasks);
-  // }, [tasks]);
+  }, [type, userInfo, taskMode]);
 
   // const openWindow = (url) => {
   //   const __window = window.open(url, "_blank", true, true, true, 300, 500);
@@ -175,31 +173,69 @@ const Tasks = () => {
     return (
       <>
         <UserHeader />
-        <div className="flex mt-36 m-7 gap-4 justify-center w-max md:w-auto md:mx-auto">
-          <div className=" relative   rounded-sm shadow-2xl   p-7">
+        {showAddTaskModal && <AddTaskModal />}
+        <div className="grid px-7 mt-32  gap-4  w-full ">
+          <div className="flex justify-between items-center mb-4  w-full flex-wrap gap-4">
+            <div>
+              <button
+                className="px-3 py-2 rounded-l-md bg-textDark text-white shadow-2xl border border-textDark "
+                onClick={() => setTaskMode("PENDING")}
+              >
+                Pending Tasks
+              </button>
+              <button
+                className="px-3 py-2 rounded-r-md border border-textDark  bg-white text-textDark shadow-2xl "
+                onClick={() => setTaskMode("COMPLETED")}
+              >
+                Completed Tasks
+              </button>
+            </div>
+            {type === "USER" && (
+              <button
+                className="px-3 py-2 rounded-md bg-textDark text-white shadow-2xl border border-textDark  "
+                onClick={() => {
+                  setTasks([]);
+                  getUserTasks();
+                }}
+              >
+                Refresh Tasks
+              </button>
+            )}
             {type === "CLIENT" && (
               <button
+                onClick={() => setShowAddTaskModal(true)}
                 className="text-white bg-darkBlue    
          py-1.5 px-16 rounded-md"
               >
                 Add Task
               </button>
             )}
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="">Pending Tasks</h1>
-              {type === "USER" && (
-                <button
-                  className="px-2 py-1 rounded-md bg-secondary text-white shadow-xl"
-                  onClick={() => {
-                    setTasks([]);
-                    getUserTasks();
-                  }}
-                >
-                  Refresh Tasks
-                </button>
-              )}
+          </div>
+          {loading1 && (
+            <div className="mx-auto w-20">
+              <_Loader />
             </div>
-            <table className="border-2">
+          )}
+          {!loading1 && !tasks.length && (
+            <h2 className="text-center text-textDark">
+              {" "}
+              {taskMode === "PENDING"
+                ? "No pending tasks available"
+                : "No Completed tasks available"}
+            </h2>
+          )}
+          <div className="flex flex-wrap gap-3 w-full">
+            {tasks &&
+              tasks.map((task, index) => (
+                <TaskCard
+                  channelName="GrowwTen"
+                  isSubsribed={task.isSubscribed}
+                  img="https://avatars.githubusercontent.com/u/23244943?v=4"
+                  youtubeUrl={task.youtubeUrl}
+                />
+              ))}
+          </div>
+          {/* <table className="border">
               <thead>
                 <tr>
                   <th>Task Type</th>
@@ -233,8 +269,8 @@ const Tasks = () => {
                       <td className="cursor-pointer">
                         <a
                           rel="noreferrer"
-                          href={task.youtubeUrl}
                           target="_blank"
+                          href={task.youtubeUrl}
                         >
                           {type === "CLIENT" ? task.youtubeUrl : "Subscribe"}
                         </a>
@@ -256,8 +292,7 @@ const Tasks = () => {
                     </tr>
                   ))}
               </tbody>
-            </table>
-          </div>
+            </table> */}
         </div>
       </>
     );
