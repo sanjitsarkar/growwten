@@ -70,8 +70,8 @@ const LoginModal = () => {
         const user = result.user;
         console.log("token", token);
         console.log("user", user);
-        sessionStorage.setItem("ytc-access-token", token);
-        sessionStorage.setItem("ytc-user", JSON.stringify(user));
+        localStorage.setItem("ytc-access-token", token);
+        localStorage.setItem("ytc-user", JSON.stringify(user));
         setLoading(false);
         setShowLoginModal(false);
         // console.log(user);
@@ -140,7 +140,6 @@ const LoginModal = () => {
         >
           Client
         </button>
-      
       </div>
       {loginAs === USER && _referralCode !== undefined && (
         <div className="flex justify-center md:inline mt-6 md:mt-0 md:mx-0">

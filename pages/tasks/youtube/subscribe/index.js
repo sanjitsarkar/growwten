@@ -3,7 +3,7 @@ import request from "../../../../lib/api";
 const Subscribe = () => {
   useEffect(async () => {
     try {
-      const token = window.sessionStorage.getItem("ytc-access-token");
+      const token = window.localStorage.getItem("ytc-access-token");
       console.log("toooken", token);
       const { data } = await request.get("/subscriptions", {
         params: {

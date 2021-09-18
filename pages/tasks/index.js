@@ -44,7 +44,7 @@ const Tasks = () => {
 
   const _isSubscribed = async (channelId) => {
     try {
-      const token = window.sessionStorage.getItem("ytc-access-token");
+      const token = window.localStorage.getItem("ytc-access-token");
       //  console.log("toooken", token);
       const { data } = await request.get("/subscriptions", {
         params: {
@@ -177,18 +177,27 @@ const Tasks = () => {
       <>
         <UserHeader />
         {showAddTaskModal && <AddTaskModal getClientTasks={getClientTasks} />}
-        <div className="grid px-7 mt-32  gap-4  w-full ">
+        <div className="grid px-4  mt-32  gap-4  w-full ">
           <div className="flex  items-center mb-4   flex-wrap gap-4">
             {type === "USER" && (
               <div className="flex w-auto">
                 <button
-                  className="px-3 py-2 rounded-l-md bg-textDark text-white shadow-2xl border border-textDark "
+                  className={`px-3 py-2 rounded-l-md ${
+                    taskMode === "PENDING"
+                      ? "bg-textDark text-white border-textDark"
+                      : "border-textDark  bg-white text-textDark"
+                  } shadow-2xl border  `}
                   onClick={() => setTaskMode("PENDING")}
                 >
                   Pending Tasks
                 </button>
                 <button
-                  className="px-3 py-2 rounded-r-md border border-textDark  bg-white text-textDark shadow-2xl "
+                  className={`px-3 py-2 rounded-r-md border 
+                  ${
+                    taskMode === "COMPLETED"
+                      ? "bg-textDark text-white border-textDark"
+                      : "border-textDark  bg-white text-textDark"
+                  } shadow-2xl`}
                   onClick={() => setTaskMode("COMPLETED")}
                 >
                   Completed Tasks
@@ -243,7 +252,7 @@ const Tasks = () => {
                   : "No Completed tasks available"}
               </h2>
             ))}
-          <div className="flex flex-wrap gap-3 w-full">
+          <div className="flex flex-wrap gap-3 w-auto">
             {tasks &&
               tasks.map((task, index) => (
                 <TaskCard

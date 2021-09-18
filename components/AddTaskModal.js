@@ -1,6 +1,14 @@
-import { addDoc, collection, doc, serverTimestamp } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
 import { useContext, useState } from "react";
 import { useAlert } from "react-alert";
+import request from "../lib/api";
 import { db } from "../lib/firebase";
 import { AuthContext } from "../lib/store/AuthStore";
 import { UtilityContext } from "../lib/store/UtiltyStore";
@@ -13,8 +21,7 @@ const AddTaskModal = ({ getClientTasks }) => {
     setLoginAs,
     showAddTaskModal,
     setShowAddTaskModal,
-    referralCode,
-    setReferralCode,
+
     setReferrerTeamNo,
     referrerTeamNo,
   } = useContext(UtilityContext);
@@ -25,10 +32,44 @@ const AddTaskModal = ({ getClientTasks }) => {
   const [taskType, setTaskType] = useState("");
   const [link, setlink] = useState("");
   const [targetSubscriber, setTargetSubscriber] = useState("");
-
+  const [referralCode, setReferralCode] = useState("");
+  const refferalCodeExist = async () => {
+    if (referralCode.includes("/")) {
+      return;
+    }
+    const data = await getDoc(doc(db, "users", referralCode));
+    console.log("data exist", data.exists());
+    return data.exists();
+  };
+  const checkYoutubeLink = async () => {
+    // link += "/";
+    const urlArray = link.split("/");
+    const channelId = urlArray[urlArray.length - 1];
+    const { data } = await request("/channels", {
+      params: {
+        part: "snippet",
+        id: channelId,
+      },
+    });
+    console.log(data.pageInfo.totalResults);
+    return data.pageInfo.totalResults;
+  };
   const addTask = async (e) => {
     e.preventDefault();
     setLoading1(true);
+    const isValid = await checkYoutubeLink();
+    if (!isValid) {
+      alert.error("You have entered the wrong youtube channel link :(");
+      setLoading1(false);
+      return;
+    }
+    if (referralCode) {
+      if (!(await refferalCodeExist())) {
+        alert.error("You have entered the wrong Refferal Code :(");
+        setLoading1(false);
+        return;
+      }
+    }
     await addDoc(collection(db, "tasks"), {
       clientId: userInfo.id,
       target: Number(targetSubscriber),
@@ -38,6 +79,7 @@ const AddTaskModal = ({ getClientTasks }) => {
       isCompleted: false,
       price: 0.6 * Number(targetSubscriber),
       createdAt: serverTimestamp(),
+      referralCode,
     });
     setLoading1(false);
     alert.success("Added successfully");
@@ -82,6 +124,15 @@ const AddTaskModal = ({ getClientTasks }) => {
           value={targetSubscriber}
           onChange={(e) => {
             setTargetSubscriber(e.target.value);
+          }}
+        />
+        <input
+          className="bg-secondary bg-opacity-5 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none md:w-auto w-min"
+          type="text"
+          placeholder="Enter ReferralCode (Optional)"
+          value={referralCode}
+          onChange={(e) => {
+            setReferralCode(e.target.value);
           }}
         />
         {loading1 ? (

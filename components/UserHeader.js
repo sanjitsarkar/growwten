@@ -24,8 +24,8 @@ const UserHeader = () => {
   const router = useRouter();
   const logout = async () => {
     setUserInfo("");
-    sessionStorage.removeItem("ytc-access-token");
-    sessionStorage.removeItem("ytc-user");
+    localStorage.removeItem("ytc-access-token");
+    localStorage.removeItem("ytc-user");
     localStorage.removeItem("type");
     await auth.signOut();
     console.log("logout suc");

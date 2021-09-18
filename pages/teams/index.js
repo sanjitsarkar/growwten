@@ -42,7 +42,7 @@ const Teams = () => {
               Team Members
             </div>
             <button
-              className="px-3 py-2 rounded-md bg-textDark text-white shadow-2xl border border-textDark  "
+              className="px-3 py-2 rounded-md bg-primary text-white shadow-2xl border border-primary  "
               onClick={() => {
                 setTeamMems([]);
                 getTeams();
