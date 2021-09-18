@@ -43,7 +43,7 @@ const UserBody = () => {
             <Card
               type="normal"
               to="/tasks"
-              title="Pending Tasks"
+              title="Tasks"
               textColor="text-white"
               bgColor="bg-secondary"
             >

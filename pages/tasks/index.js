@@ -7,6 +7,7 @@ import {
   getDocs,
   increment,
   limit,
+  orderBy,
   query,
   setDoc,
   updateDoc,
@@ -64,7 +65,7 @@ const Tasks = () => {
   };
   // const refreshStatus = ()=>{
 
-  //                           const urlArray = task.youtubeUrl.split("/");
+  //                           const urlArray = task.url.split("/");
   //                           const channelId = urlArray[urlArray.length - 1];
   //                           let isSubscribed = await _isSubscribed(channelId);
   //                           if (isSubscribed) {
@@ -73,7 +74,7 @@ const Tasks = () => {
   //                             isSubscribed = "Not Subscribed";
   //                           }
   //                           const elementIdx = tasks.find(
-  //                             (_task) => _task.youtubeUrl === task.youtubeUrl
+  //                             (_task) => _task.url === task.url
   //                           );
   //                           let newTasks = [...tasks];
   //                           newTasks[elementIdx] = {
@@ -97,14 +98,14 @@ const Tasks = () => {
       query(
         collection(db, "tasks"),
         where("clientId", "==", userInfo.id),
+        orderBy("createdAt", "desc"),
         limit(10)
       )
     );
     // console.log("clientTasks", dataSnap.docs.length);
     setLoading1(false);
-    dataSnap.docs.forEach((_doc) => {
-      setTasks([...tasks, _doc.data()]);
-    });
+
+    setTasks(dataSnap.docs.map((_doc) => _doc.data()));
   };
   const getUserTasks = async () => {
     // let _tasks = [];
@@ -114,6 +115,8 @@ const Tasks = () => {
       query(
         collection(db, "tasks"),
         where("isCompleted", "==", false),
+        orderBy("createdAt", "desc"),
+
         limit(10)
       )
     );
@@ -122,7 +125,7 @@ const Tasks = () => {
 
     Promise.all(
       dataSnap.docs.map(async (_doc) => {
-        const urlArray = _doc.data().youtubeUrl.split("/");
+        const urlArray = _doc.data().url.split("/");
         const channelId = urlArray[urlArray.length - 1];
         console.log("doc", _doc.data());
         const _data = await isTaskDone(_doc.id);
@@ -173,26 +176,28 @@ const Tasks = () => {
     return (
       <>
         <UserHeader />
-        {showAddTaskModal && <AddTaskModal />}
+        {showAddTaskModal && <AddTaskModal getClientTasks={getClientTasks} />}
         <div className="grid px-7 mt-32  gap-4  w-full ">
-          <div className="flex justify-between items-center mb-4  w-full flex-wrap gap-4">
-            <div>
-              <button
-                className="px-3 py-2 rounded-l-md bg-textDark text-white shadow-2xl border border-textDark "
-                onClick={() => setTaskMode("PENDING")}
-              >
-                Pending Tasks
-              </button>
-              <button
-                className="px-3 py-2 rounded-r-md border border-textDark  bg-white text-textDark shadow-2xl "
-                onClick={() => setTaskMode("COMPLETED")}
-              >
-                Completed Tasks
-              </button>
-            </div>
+          <div className="flex  items-center mb-4   flex-wrap gap-4">
+            {type === "USER" && (
+              <div className="flex w-auto">
+                <button
+                  className="px-3 py-2 rounded-l-md bg-textDark text-white shadow-2xl border border-textDark "
+                  onClick={() => setTaskMode("PENDING")}
+                >
+                  Pending Tasks
+                </button>
+                <button
+                  className="px-3 py-2 rounded-r-md border border-textDark  bg-white text-textDark shadow-2xl "
+                  onClick={() => setTaskMode("COMPLETED")}
+                >
+                  Completed Tasks
+                </button>
+              </div>
+            )}
             {type === "USER" && (
               <button
-                className="px-3 py-2 rounded-md bg-textDark text-white shadow-2xl border border-textDark  "
+                className="px-3 py-2 rounded-md bg-primary text-white shadow-2xl border border-primary   "
                 onClick={() => {
                   setTasks([]);
                   getUserTasks();
@@ -204,35 +209,52 @@ const Tasks = () => {
             {type === "CLIENT" && (
               <button
                 onClick={() => setShowAddTaskModal(true)}
-                className="text-white bg-darkBlue    
-         py-1.5 px-16 rounded-md"
+                className="px-3 py-2 rounded-md bg-textDark text-white shadow-2xl border border-textDark mx-auto md:mx-0 "
               >
                 Add Task
               </button>
             )}
+            {type === "CLIENT" && (
+              <button
+                className="px-3 py-2 rounded-md bg-primary text-white shadow-2xl border border-primary mx-auto md:mx-0 "
+                onClick={() => {
+                  setTasks([]);
+                  getClientTasks();
+                }}
+              >
+                Refresh Tasks
+              </button>
+            )}
           </div>
           {loading1 && (
-            <div className="mx-auto w-20">
+            <div className="mx-auto">
               <_Loader />
             </div>
           )}
-          {!loading1 && !tasks.length && (
-            <h2 className="text-center text-textDark">
-              {" "}
-              {taskMode === "PENDING"
-                ? "No pending tasks available"
-                : "No Completed tasks available"}
-            </h2>
-          )}
+          {!loading1 &&
+            !tasks.length &&
+            (type === "CLIENT" ? (
+              <h2 className="text-center text-textDark">No Task added</h2>
+            ) : (
+              <h2 className="text-center text-textDark">
+                {" "}
+                {taskMode === "PENDING"
+                  ? "No pending tasks available"
+                  : "No Completed tasks available"}
+              </h2>
+            ))}
           <div className="flex flex-wrap gap-3 w-full">
             {tasks &&
               tasks.map((task, index) => (
                 <TaskCard
-                  channelName="GrowwTen"
+                  type={type}
                   isSubsribed={task.isSubscribed}
-                  img="https://avatars.githubusercontent.com/u/23244943?v=4"
-                  youtubeUrl={task.youtubeUrl}
-                  key={task.youtubeUrl}
+                  url={task.url}
+                  target={task.target}
+                  price={task.price}
+                  isCompleted={task.isCompleted}
+                  completed={task.completed}
+                  key={task.url}
                 />
               ))}
           </div>
@@ -271,9 +293,9 @@ const Tasks = () => {
                         <a
                           rel="noreferrer"
                           target="_blank"
-                          href={task.youtubeUrl}
+                          href={task.url}
                         >
-                          {type === "CLIENT" ? task.youtubeUrl : "Subscribe"}
+                          {type === "CLIENT" ? task.url : "Subscribe"}
                         </a>
                       </td>
                       {type === "USER" && (

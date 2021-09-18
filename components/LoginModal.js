@@ -140,16 +140,7 @@ const LoginModal = () => {
         >
           Client
         </button>
-        <button
-          onClick={() => handleLoginTypeClick(ADMIN)}
-          className={`${
-            loginAs === ADMIN
-              ? "text-white bg-darkBlue"
-              : "text-darkBlue bg-white border-2 border-textDark"
-          } py-1.5 px-16 rounded-md`}
-        >
-          Admin
-        </button>
+      
       </div>
       {loginAs === USER && _referralCode !== undefined && (
         <div className="flex justify-center md:inline mt-6 md:mt-0 md:mx-0">
@@ -199,7 +190,7 @@ const LoginModal = () => {
             </svg>
           </button>
         )}
-        <button className="py-2 md:px-6  px-3  shadow-md bg-white flex gap-2 justify-between items-center">
+        {/* <button className="py-2 md:px-6  px-3  shadow-md bg-white flex gap-2 justify-between items-center">
           <span>Login with Facebook</span>
           <svg
             width="25"
@@ -216,7 +207,7 @@ const LoginModal = () => {
               d="M711.3,660,734,512H592V415.95728C592,375.46667,611.83508,336,675.43713,336H740V210s-58.59235-10-114.61078-10C508.43854,200,432,270.87982,432,399.2V512H302V660H432v357.77777a517.39619,517.39619,0,0,0,160,0V660Z"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
     </div>
   );
