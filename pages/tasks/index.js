@@ -1,3 +1,4 @@
+import { GoogleAuthProvider } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -44,8 +45,9 @@ const Tasks = () => {
 
   const _isSubscribed = async (channelId) => {
     try {
-      const token = window.localStorage.getItem("ytc-access-token");
-      //  console.log("toooken", token);
+      // const token = window.localStorage.getItem("ytc-access-token");
+      const token = refreshStatus();
+      // console.log("toooken", token);
       const { data } = await request.get("/subscriptions", {
         params: {
           part: "snippet",
@@ -63,7 +65,13 @@ const Tasks = () => {
       return 0;
     }
   };
-  // const refreshStatus = ()=>{
+  const refreshStatus = () => {
+    const result = window?.localStorage.getItem("result");
+
+    const data = GoogleAuthProvider.credentialFromResult(JSON.parse(result));
+    // console.log("dataaaaa", data);
+    return data?.accessToken;
+  };
 
   //                           const urlArray = task.url.split("/");
   //                           const channelId = urlArray[urlArray.length - 1];

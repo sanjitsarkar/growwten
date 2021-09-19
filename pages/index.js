@@ -41,6 +41,32 @@ const Home = () => {
     referrerInfo,
     setReferrerInfo,
   } = useContext(UtilityContext);
+
+  //   const refreshToken = async() => {
+  //     print("Token Refresh");
+  //      const provider = new GoogleAuthProvider();
+  //       provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
+  // auth.
+  //     google(auth, provider)
+  //       .then(async (result) => {
+  //         // This gives you a Google Access Token. You can use it to access the Google API.
+  //         const credential = GoogleAuthProvider.credentialFromResult(result);
+
+  //         const token = credential.accessToken;
+  //         const user = result.user;
+  //     // const GoogleSignInAccount googleSignInAccount =
+  //     //     await googleSignIn.signInSilently();
+  //     // final GoogleSignInAuthentication googleSignInAuthentication =
+  //     //     await googleSignInAccount.authentication;
+
+  //     // final AuthCredential credential = GoogleAuthProvider.getCredential(
+  //     //   accessToken: googleSignInAuthentication.accessToken,
+  //     //   idToken: googleSignInAuthentication.idToken,
+  //     // );
+  //     // final AuthResult authResult = await auth.signInWithCredential(credential);
+
+  //     // return googleSignInAuthentication.accessToken; // New refreshed token
+  //   }
   useEffect(() => {
     if (_referralCode) {
       setShowLoginModal(true);

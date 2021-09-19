@@ -36,7 +36,7 @@ const TaskCard = ({
           <img src={YoutubeImage.src} alt={channelName} />
           <div className="">
             <h1 className="font-black text-3xl text-textDark opacity-80 ">
-              Youtube
+              YouTube
             </h1>
             <h4 className="text-textDark -mt-1.5 ">Subscription</h4>
           </div>

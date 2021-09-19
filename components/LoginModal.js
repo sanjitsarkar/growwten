@@ -68,9 +68,13 @@ const LoginModal = () => {
 
         const token = credential.accessToken;
         const user = result.user;
-        console.log("token", token);
-        console.log("user", user);
+        // console.log("token", token);
+        // console.log("credential", credential);
+        // console.log("credential1", credential1);
+        // console.log("result", result);
+        // console.log("user", user);
         localStorage.setItem("ytc-access-token", token);
+        localStorage.setItem("result", JSON.stringify(result));
         localStorage.setItem("ytc-user", JSON.stringify(user));
         setLoading(false);
         setShowLoginModal(false);
