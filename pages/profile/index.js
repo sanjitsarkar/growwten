@@ -85,7 +85,7 @@ const Profile = () => {
           <div className=" relative   rounded-md shadow-2xl   p-7 bg-textDark md:w-1/2   ">
             <div className="text-center">
               <img
-                className=" absolute -top-10 left-1/2 transform -translate-x-1/2 rounded-full border-4 border-tertiary w-20 "
+                className=" absolute -top-10 left-1/2 transform -translate-x-1/2 rounded-full border-4 border-white  w-20 "
                 src={user.photoURL}
                 alt=""
               />
@@ -161,30 +161,38 @@ const Profile = () => {
               </div>
             ) : (
               <>
-                <div className="flex flex-wrap gap-4  py-2 items-center b">
-                  <h1 className="text-textDark">Referrer Name</h1>
-                  <h3 className="text-textDark text-opacity-95 text-sm">
+                <div className="md:flex flex-wrap gap-0 md:gap-4 grid py-2 items-center ">
+                  <h1 className="text-textDark uppercase font-medium">
+                    Referrer Name
+                  </h1>
+                  <h3 className="text-textDark text-opacity-95 text-base">
                     {referrerInfo.displayName}
                   </h3>
                 </div>
-                <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
-                  <h1 className="text-textDark">Referrer ID</h1>
+                <div className="md:flex  flex-wrap gap-4 py-2 items-center ">
+                  <h1 className="text-textDark uppercase font-medium">
+                    Referrer ID
+                  </h1>
                   <h3 className="text-textDark text-opacity-95   text-sm">
                     {userInfo.referralCode}
                   </h3>
                 </div>
                 {userInfo.teamNo && (
-                  <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
-                    <h1 className="text-textDark">Position</h1>
+                  <div className="md:flex  flex-wrap gap-4 py-2 items-center ">
+                    <h1 className="text-textDark uppercase font-medium">
+                      Position
+                    </h1>
                     <h3 className="text-textDark text-opacity-95   text-sm">
-                      {userInfo.teamNo}
+                      Level {userInfo.teamNo}
                     </h3>
                   </div>
                 )}
               </>
             )}
             <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
-              <h1 className="text-textDark">Joining Date</h1>
+              <h1 className="text-textDark uppercase font-medium">
+                Joining Date
+              </h1>
               <h3 className="text-textDark text-opacity-95   text-sm">
                 {new Date(userInfo.createdAt.seconds * 1000).toLocaleString(
                   "default"
@@ -192,7 +200,9 @@ const Profile = () => {
               </h3>
             </div>
             <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
-              <h1 className="text-textDark">Referral Link</h1>
+              <h1 className="text-textDark uppercase font-medium">
+                Referral Link
+              </h1>
               <a
                 href={`https://growwten.com?referralCode=${userInfo.id}`}
                 className="text-textDark underline text-opacity-95   text-sm break-all"
