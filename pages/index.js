@@ -91,6 +91,7 @@ const Home = () => {
             email: user.email,
             createdAt: serverTimestamp(),
             photoURL: user.photoURL,
+            referralCode,
             tasks: 0,
           };
           await setDoc(doc(db, collectionName, user.uid), userInfo);
@@ -103,17 +104,26 @@ const Home = () => {
           userInfo = {
             type,
             referralCode,
+            isCompleted: false,
             displayName: user.displayName,
             email: user.email,
+            dob: "",
             createdAt: serverTimestamp(),
             photoURL: user.photoURL,
             teamCount: 1,
+            phoneNo: "",
+            address: "",
             teamNo: referrer.data().teamNo + 1,
           };
         } else {
           userInfo = {
             type,
+            isCompleted: false,
+
+            address: "",
             referralCode,
+            dob: "",
+            phoneNo: "",
             displayName: user.displayName,
             email: user.email,
             createdAt: serverTimestamp(),

@@ -1,4 +1,11 @@
-import { GoogleAuthProvider } from "firebase/auth";
+import axios from "axios";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+  signInWithCredential,
+} from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -16,12 +23,13 @@ import {
 } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import AddTaskModal from "../../components/AddTaskModal";
 import _Loader from "../../components/Loader";
 import TaskCard from "../../components/TaskCard";
 import UserHeader from "../../components/UserHeader";
 import request from "../../lib/api";
-import { db } from "../../lib/firebase";
+import { auth, db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
 import { UtilityContext } from "../../lib/store/UtiltyStore";
 const Tasks = () => {
@@ -31,10 +39,18 @@ const Tasks = () => {
   const [loading2, setLoading2] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [type, setType] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const alert = useAlert();
   const [taskMode, setTaskMode] = useState("PENDING");
   useEffect(() => {
     setType(window.localStorage.getItem("type"));
   }, [type]);
+  useEffect(() => {
+    if (showAlert) {
+      alert.error("You are signing out as your session has been expired.");
+      setShowAlert(false);
+    }
+  }, [showAlert]);
   // const [_window, _setWindow] = useState("");
   const router = useRouter();
   useEffect(() => {
@@ -46,7 +62,7 @@ const Tasks = () => {
   const _isSubscribed = async (channelId) => {
     try {
       // const token = window.localStorage.getItem("ytc-access-token");
-      const token = refreshStatus();
+      const token = window.localStorage.getItem("accessToken");
       // console.log("toooken", token);
       const { data } = await request.get("/subscriptions", {
         params: {
@@ -62,15 +78,21 @@ const Tasks = () => {
       return data.pageInfo.totalResults;
     } catch (e) {
       console.log(e);
+      await auth.signOut();
+      setShowAlert(true);
       return 0;
     }
   };
-  const refreshStatus = () => {
-    const result = window?.localStorage.getItem("result");
-
-    const data = GoogleAuthProvider.credentialFromResult(JSON.parse(result));
-    // console.log("dataaaaa", data);
-    return data?.accessToken;
+  const refreshStatus = async () => {
+    const token = window?.localStorage.getItem("accessToken");
+    // console.log("Users", user);
+    // const credential = GoogleAuthProvider.credential(
+    //   user.stsTokenManager.accessToken
+    // );
+    // const result = await signInWithCredential(credential);
+    // const data = GoogleAuthProvider.credentialFromResult(result);
+    // console.log("dataaaaa", data.accessToken);
+    return token;
   };
 
   //                           const urlArray = task.url.split("/");

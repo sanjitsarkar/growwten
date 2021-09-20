@@ -5,8 +5,44 @@ import { UtilityProvider } from "../lib/store/UtiltyStore";
 import Head from "next/head";
 import "../styles/globals.css";
 import { useEffect } from "react";
+import { auth } from "../lib/firebase";
+import axios from "axios";
 function MyApp({ Component, pageProps }) {
-  useEffect(() => {
+  const logout = async () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("type");
+    sessionStorage.removeItem("isLoggedIn", true);
+
+    await auth.signOut();
+    console.log("logout suc");
+  };
+  const setAccessToken = async () => {
+    console.log("localStorage", localStorage.getItem("refreshToken"));
+    // const data = await axios.post("https://oauth2.googleapis.com/token", {
+    //   client_id:
+    //     "338041802631-n7hop260cmghgjdghi6pl3fjae0af26d.apps.googleusercontent.com",
+    //   client_secret: "2IdwRZGyM4Z2wSOprar-HuyX",
+    //   refresh_token: localStorage.getItem("refreshToken"),
+    //   prompt: "consent",
+    //   access_type: "offline",
+    //   grant_type: "refresh_token",
+    // });
+    // console.log("tokenssssssssss", data);
+  };
+  useEffect(async () => {
+    await setAccessToken();
+    // await axios.post("oauth2.googleapis.com/token",{
+    //   "client_id":"",
+    //   "client_secret":"",
+    //   "refresh_token":"",
+    //   "grant_type":"refresh_token"
+    // });
+    // const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+    // if (isLoggedIn === null) {
+    //   console.log("logout")
+    //   await logout();
+    // }
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
         navigator.serviceWorker.register("/sw.js").then(

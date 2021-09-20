@@ -7,6 +7,9 @@ import UserHeader from "../../components/UserHeader";
 import { db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
 import { UtilityContext } from "../../lib/store/UtiltyStore";
+import Location from "../../components/Images/location.svg";
+import Phone from "../../components/Images/phone.svg";
+import ProfileForm from "../../components/ProfileForm";
 const Profile = () => {
   const alert = useAlert();
   const {
@@ -20,6 +23,8 @@ const Profile = () => {
     referrerTeamNo,
     referrerInfo,
     setReferrerInfo,
+    showProfileFormModal,
+    setShowProfileFormModal,
   } = useContext(UtilityContext);
 
   const { loading, user, userInfo } = useContext(AuthContext);
@@ -69,33 +74,71 @@ const Profile = () => {
       }
     }
   };
+  useEffect(() => {}, []);
 
   if (user && userInfo)
     return (
       <>
-        <UserHeader user={userInfo} />4
-        <div className="flex mt-36 m-7 gap-4 justify-center w-max md:w-auto md:mx-auto">
-          <div className=" relative   rounded-sm shadow-2xl   p-7 ">
+        {showProfileFormModal && <ProfileForm />}
+        <UserHeader user={userInfo} />
+        <div className="md:flex  mt-40 justify-center  gap-4 p-7   text-white w-full">
+          <div className=" relative   rounded-md shadow-2xl   p-7 bg-textDark md:w-1/2   ">
+            <div className="text-center">
+              <img
+                className=" absolute -top-10 left-1/2 transform -translate-x-1/2 rounded-full border-4 border-tertiary w-20 "
+                src={user.photoURL}
+                alt=""
+              />
+              <h3 className=" text-lg mt-7">{userInfo.displayName}</h3>
+              <h3 className=" text-md font-light">{userInfo.email}</h3>
+            </div>
+
+            <div className="grid   mt-4 md:justify-center md:gap-4 flex-wrap ">
+              {userInfo.isCompleted && (
+                <div className="flex gap-7 justify-center">
+                  <div className="md:flex grid gap-4  py-2 md:place-content-start place-content-center place-items-center">
+                    <img src={Phone.src} alt="" width="40" />
+                    <h3 className=" text-md">{userInfo.phoneNo}</h3>
+                  </div>
+                  <div className="md:flex grid gap-4  py-2  md:place-content-startplace-content-center place-items-center">
+                    <img src={Location.src} alt="" width="40" />
+                    <h3 className=" text-md">{userInfo.address}</h3>
+                  </div>
+                </div>
+              )}
+              {userInfo.isCompleted ? (
+                <button
+                  className="text-center  py-2  rounded-3xl bg-white text-textDark w-max mx-auto px-7 mt-7"
+                  onClick={() => setShowProfileFormModal(true)}
+                >
+                  Edit Profile
+                </button>
+              ) : (
+                <button
+                  className=" text-center  py-2  rounded-3xl bg-white text-textDark w-max mx-auto px-7 mt-7"
+                  onClick={() => setShowProfileFormModal(true)}
+                >
+                  Complete Profile
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="    rounded-xl shadow-2xl   p-7 md:w-1/2 w-full   grid bg-white">
             {/* <img
           className=" absolute -top-10 left-1/2 transform -translate-x-1/2 "
           src={user.photoURL}
           alt=""
         /> */}
-            <div className="md:flex grid gap-4  py-2 items-center">
-              <h1 className="text-textDark">Profile name</h1>
-              <h3 className="text-gray-600 text-sm">{userInfo.displayName}</h3>
-            </div>
-            <div className="md:flex grid gap-4  py-2 items-center">
-              <h1 className="text-textDark">Email</h1>
-              <h3 className="text-gray-600 text-sm">{userInfo.email}</h3>
-            </div>
-           {
-             userInfo.type==="USER" &&
-             <>
+
+            {/* <div className="md:flex grid gap-4  py-2 items-center">
+              <h1 className="text-textDark">Referrer ID</h1>
+              <h3 className="text-gray-600 text-sm">{referralCode}</h3>
+            </div> */}
+
             {userInfo.referralCode === "" ? (
               <div className="md:flex grid gap-4  py-2 items-center">
                 <input
-                  className="w-full bg-secondary bg-opacity-10 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none"
+                  className="w-full bg-tertiary bg-opacity-900 px-3 py-1.5  rounded-md placeholder-textDark placeholder-opacity-75 text-textDark outline-none"
                   type="text"
                   placeholder="Enter Referral Code"
                   value={referralCode}
@@ -108,8 +151,8 @@ const Profile = () => {
                 ) : (
                   <button
                     onClick={() => addReferralCode()}
-                    className="text-white bg-secondary
-                 border-2 
+                    className="text-white bg-textDark
+                       
              py-1.5 px-7 rounded-md"
                   >
                     Add
@@ -118,31 +161,45 @@ const Profile = () => {
               </div>
             ) : (
               <>
-                <div className="md:flex grid gap-4  py-2 items-center">
-                  <input
-                    readOnly
-                    disabled
-                    className="w-full bg-secondary bg-opacity-10 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none bre"
-                    type="text"
-                    placeholder="Enter Referral Code"
-                    value={userInfo.referralCode}
-                  />
-                </div>
-
-                <div className="md:flex grid gap-4  py-2">
-                  <h1 className="text-textDark">Referrer name</h1>
-                  <h3 className="text-gray-600 text-sm w-max md:w-full break-words">
+                <div className="flex flex-wrap gap-4  py-2 items-center b">
+                  <h1 className="text-textDark">Referrer Name</h1>
+                  <h3 className="text-textDark text-opacity-95 text-sm">
                     {referrerInfo.displayName}
                   </h3>
                 </div>
+                <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
+                  <h1 className="text-textDark">Referrer ID</h1>
+                  <h3 className="text-textDark text-opacity-95   text-sm">
+                    {userInfo.referralCode}
+                  </h3>
+                </div>
+                {userInfo.teamNo && (
+                  <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
+                    <h1 className="text-textDark">Position</h1>
+                    <h3 className="text-textDark text-opacity-95   text-sm">
+                      {userInfo.teamNo}
+                    </h3>
+                  </div>
+                )}
               </>
             )}
-            <div className="md:flex grid gap-4  py-2">
-              <h1 className="text-textDark">Referral link</h1>
-              <h3 className="text-gray-600 text-sm w-max md:w-full break-words">{`https://growwten.com?referralCode=${userInfo.id}`}</h3>
+            <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
+              <h1 className="text-textDark">Joining Date</h1>
+              <h3 className="text-textDark text-opacity-95   text-sm">
+                {new Date(userInfo.createdAt.seconds * 1000).toLocaleString(
+                  "default"
+                )}
+              </h3>
             </div>
-            </>
-}
+            <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
+              <h1 className="text-textDark">Referral Link</h1>
+              <a
+                href={`https://growwten.com?referralCode=${userInfo.id}`}
+                className="text-textDark underline text-opacity-95   text-sm break-all"
+              >
+                {`https://growwten.com?referralCode=${userInfo.id}`}
+              </a>
+            </div>
           </div>
         </div>
       </>

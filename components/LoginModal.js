@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { ADMIN, CLIENT, USER } from "../lib/const";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithCustomToken,
+  signInWithCredential,
+} from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/dist/client/router";
@@ -61,21 +66,23 @@ const LoginModal = () => {
     const provider = new GoogleAuthProvider();
     if (loginAs === USER)
       provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
+    // signInWithCredential()
     signInWithPopup(auth, provider)
       .then(async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
 
-        const token = credential.accessToken;
+        const accessToken = credential.accessToken;
+        const refreshToken = result._tokenResponse.refreshToken;
         const user = result.user;
-        // console.log("token", token);
-        // console.log("credential", credential);
-        // console.log("credential1", credential1);
-        // console.log("result", result);
-        // console.log("user", user);
-        localStorage.setItem("ytc-access-token", token);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        
+        // sessionStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("cred", JSON.stringify(credential));
         localStorage.setItem("result", JSON.stringify(result));
-        localStorage.setItem("ytc-user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
         setLoading(false);
         setShowLoginModal(false);
         // console.log(user);
