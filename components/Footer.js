@@ -57,40 +57,49 @@ const Footer = () => {
         </div>
         <div className="grid grid-cols-2 text-sm gap-x-7 gap-y-8  lg:w-2/3 sm:grid-cols-4  mx-auto md:mx-0">
           <div className="space-y-3">
-            <h3 className="tracking-wide uppercase text-coolGray-900  mx-auto md:mx-0">
+            <h3 className="tracking-wide uppercase text-coolGray-900  mx-auto md:mx-0 font-semibold">
               Product
             </h3>
             <ul className="space-y-1">
               <li>
-                <Link href="#why-us">Features</Link>
+                <Link href="/#why-us">Features</Link>
               </li>
               <li>
-                <Link href="#services">Services</Link>
+                <Link href="/#services">Services</Link>
               </li>
               <li>
+                <Link href="/refund">Refunds/Cancellations</Link>
+              </li>
+              {/* <li>
                 <Link href="/pricing">Pricing</Link>
               </li>
               <li>
                 <Link href="/faq">FAQ</Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div className="space-y-3">
-            <h3 className="tracking-wide uppercase text-coolGray-900">
+            <h3 className="tracking-wide uppercase text-coolGray-900 font-semibold">
               Company
             </h3>
             <ul className="space-y-1">
               <li>
-                <Link href="/privacy">Privacy</Link>
+                <Link href="/terms">Terms & Conditions</Link>
               </li>
               <li>
-                <Link href="/terms">Terms of Service</Link>
+                <Link href="/privacy">Privacy Policy</Link>
+              </li>
+
+              <li>
+                <Link href="/about">About Us</Link>
               </li>
             </ul>
           </div>
 
           <div className="space-y-3 ">
-            <div className="uppercase text-coolGray-900 ">Social media</div>
+            <div className="uppercase text-coolGray-900 font-semibold">
+              Social media
+            </div>
             <div className="flex justify-start space-x-3">
               <Link
                 rel="noreferrer"
@@ -141,10 +150,24 @@ const Footer = () => {
               </Link>
             </div>
           </div>
+          <div className="space-y-3">
+            <h3 className="tracking-wide uppercase text-coolGray-900 font-semibold">
+              Contact Us
+            </h3>
+            <ul className="space-y-1">
+              <address>
+                <a href="tel:+91 9460874314">+91 9460874314</a>
+                <br />
+                <a href="mailto:growwten@gmail.com">growwten@gmail.com</a>
+                <br />
+                Kayakuchi Barpeta, Assam (781352)
+              </address>
+            </ul>
+          </div>
         </div>
       </div>
       <div className="py-6 text-sm text-center text-coolGray-600">
-        © 2021 Company Co. All rights reserved.
+        © 2021 Growwten Co. All rights reserved.
       </div>
     </footer>
   );

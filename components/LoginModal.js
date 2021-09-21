@@ -65,44 +65,43 @@ const LoginModal = () => {
     // console.log("helllo");
     const provider = new GoogleAuthProvider();
     if (loginAs === USER)
-      provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
-    // signInWithCredential()
-    signInWithPopup(auth, provider)
-      .then(async (result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
+      // provider.addScope("https://www.googleapis.com/auth/youtube.readonly");
+      // signInWithCredential()
+      signInWithPopup(auth, provider)
+        .then(async (result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
 
-        const accessToken = credential.accessToken;
-        const refreshToken = result._tokenResponse.refreshToken;
-        const user = result.user;
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+          const accessToken = credential.accessToken;
+          const refreshToken = result._tokenResponse.refreshToken;
+          const user = result.user;
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
 
-        
-        // sessionStorage.setItem("isLoggedIn", true);
-        localStorage.setItem("cred", JSON.stringify(credential));
-        localStorage.setItem("result", JSON.stringify(result));
-        localStorage.setItem("user", JSON.stringify(user));
-        setLoading(false);
-        setShowLoginModal(false);
-        // console.log(user);
+          // sessionStorage.setItem("isLoggedIn", true);
+          localStorage.setItem("cred", JSON.stringify(credential));
+          localStorage.setItem("result", JSON.stringify(result));
+          localStorage.setItem("user", JSON.stringify(user));
+          setLoading(false);
+          setShowLoginModal(false);
+          // console.log(user);
 
-        // ...
-      })
-      .catch((error) => {
-        setLoading(false);
+          // ...
+        })
+        .catch((error) => {
+          setLoading(false);
 
-        setShowLoginModal(false);
+          setShowLoginModal(false);
 
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.email;
+          // The AuthCredential type that was used.
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          // ...
+        });
   };
 
   // const loginWihFacebook = async () => {};

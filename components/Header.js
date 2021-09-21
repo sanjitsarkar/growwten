@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useState, useEffect, useContext } from "react";
 import { UtilityContext } from "../lib/store/UtiltyStore";
 import NavItem from "./NavItem";
@@ -80,7 +81,11 @@ const Header = () => {
           </defs>
         </svg>
 
-        <h3 className="text-textDark font-md text-md text-center">GrowwTen</h3>
+        <Link href="/">
+          <h3 className="text-textDark font-md text-md text-center cursor-pointer">
+            GrowwTen
+          </h3>
+        </Link>
         {/* </div> */}
       </div>
       <div className="flex gap-7 items-center ">
