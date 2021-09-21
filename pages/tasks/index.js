@@ -78,8 +78,8 @@ const Tasks = () => {
       return data.pageInfo.totalResults;
     } catch (e) {
       console.log(e);
-      // await auth.signOut();
-      // setShowAlert(true);
+      await auth.signOut();
+      setShowAlert(true);
       return 0;
     }
   };
