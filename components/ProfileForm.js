@@ -7,7 +7,7 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import request from "../lib/api";
 import { db } from "../lib/firebase";
@@ -26,6 +26,10 @@ const ProfileForm = ({}) => {
     showProfileFormModal,
     setShowProfileFormModal,
   } = useContext(UtilityContext);
+  const [type, setType] = useState("");
+  useEffect(() => {
+    setType(window.localStorage.getItem("type"));
+  }, [type]);
   const { loading, user, userInfo } = useContext(AuthContext);
 
   const [loading1, setLoading1] = useState(false);
@@ -37,13 +41,18 @@ const ProfileForm = ({}) => {
   const addProfile = async (e) => {
     e.preventDefault();
     setLoading1(true);
-
-    await updateDoc(doc(db, "users", userInfo.id), {
+    let collectionName = "";
+    if (type === "USER") {
+      collectionName = "users";
+    } else {
+      collectionName = "clients";
+    }
+    await updateDoc(doc(db, collectionName, userInfo.id), {
       dob,
       phoneNo: Number(phoneNo),
       address,
       displayName,
-      isCompleted:true
+      isCompleted: true,
     });
     setLoading1(false);
     alert.success("Profile Updated successfully");

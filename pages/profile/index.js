@@ -26,7 +26,10 @@ const Profile = () => {
     showProfileFormModal,
     setShowProfileFormModal,
   } = useContext(UtilityContext);
-
+  const [type, setType] = useState("");
+  useEffect(() => {
+    setType(window.localStorage.getItem("type"));
+  }, [type]);
   const { loading, user, userInfo } = useContext(AuthContext);
   const router = useRouter();
   useEffect(async () => {
@@ -123,7 +126,7 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="    rounded-xl shadow-2xl   p-7 md:w-1/2 w-full   grid bg-white">
+          <div className="    rounded-xl shadow-2xl   p-7 md:w-1/2 w-full   grid bg-white place-content-start">
             {/* <img
           className=" absolute -top-10 left-1/2 transform -translate-x-1/2 "
           src={user.photoURL}
@@ -161,22 +164,27 @@ const Profile = () => {
               </div>
             ) : (
               <>
-                <div className="md:flex flex-wrap gap-0 md:gap-4 grid py-2 items-center ">
-                  <h1 className="text-textDark uppercase font-medium">
-                    Referrer Name
-                  </h1>
-                  <h3 className="text-textDark text-opacity-95 text-base">
-                    {referrerInfo.displayName}
-                  </h3>
-                </div>
-                <div className="md:flex  flex-wrap gap-4 py-2 items-center ">
-                  <h1 className="text-textDark uppercase font-medium">
-                    Referrer ID
-                  </h1>
-                  <h3 className="text-textDark text-opacity-95   text-sm">
-                    {userInfo.referralCode}
-                  </h3>
-                </div>
+                {type === "USER" && (
+                  <>
+                    <div className="md:flex flex-wrap gap-0 md:gap-4 grid py-2 items-center ">
+                      <h1 className="text-textDark uppercase font-medium">
+                        Referrer Name
+                      </h1>
+                      <h3 className="text-textDark text-opacity-95 text-base">
+                        {referrerInfo.displayName}
+                      </h3>
+                    </div>
+
+                    <div className="md:flex  flex-wrap gap-4 py-2 items-center ">
+                      <h1 className="text-textDark uppercase font-medium">
+                        Referrer ID
+                      </h1>
+                      <h3 className="text-textDark text-opacity-95   text-sm">
+                        {userInfo.referralCode}
+                      </h3>
+                    </div>
+                  </>
+                )}
                 {userInfo.teamNo && (
                   <div className="md:flex  flex-wrap gap-4 py-2 items-center ">
                     <h1 className="text-textDark uppercase font-medium">
@@ -199,17 +207,19 @@ const Profile = () => {
                 )}
               </h3>
             </div>
-            <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
-              <h1 className="text-textDark uppercase font-medium">
-                Referral Link
-              </h1>
-              <a
-                href={`https://growwten.com?referralCode=${userInfo.id}`}
-                className="text-textDark underline text-opacity-95   text-sm break-all"
-              >
-                {`https://growwten.com?referralCode=${userInfo.id}`}
-              </a>
-            </div>
+            {type === "USER" && (
+              <div className="md:flex  flex-wrap gap-4 py-2 items-center b">
+                <h1 className="text-textDark uppercase font-medium">
+                  Referral Link
+                </h1>
+                <a
+                  href={`https://growwten.com?referralCode=${userInfo.id}`}
+                  className="text-textDark underline text-opacity-95   text-sm break-all"
+                >
+                  {`https://growwten.com?referralCode=${userInfo.id}`}
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </>

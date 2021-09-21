@@ -4,16 +4,137 @@ import {
   doc,
   getDoc,
   getDocs,
+  increment,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useAlert } from "react-alert";
 import request from "../lib/api";
 import { db } from "../lib/firebase";
 import { AuthContext } from "../lib/store/AuthStore";
 import { UtilityContext } from "../lib/store/UtiltyStore";
 import _Loader from "./Loader";
+import Logo from "../components/Images/growwten.svg";
+
+function loadScript(src) {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
+}
 const AddTaskModal = ({ getClientTasks }) => {
+  const [type, setType] = useState("");
+  useEffect(() => {
+    setType(window.localStorage.getItem("type"));
+  }, [type]);
+  const displayRazorPay = async () => {
+    setLoading1(true);
+    try {
+      const isValid = await checkYoutubeLink();
+      if (!isValid) {
+        alert.error("You have entered the wrong youtube channel link :(");
+        setLoading1(false);
+        return;
+      }
+
+      if (referralCode) {
+        if (!(await refferalCodeExist())) {
+          alert.error("You have entered the wrong Refferal Code :(");
+          setLoading1(false);
+          return;
+        }
+      }
+
+      const res = await loadScript(
+        "https://checkout.razorpay.com/v1/checkout.js"
+      );
+      if (!res) {
+        alert("You are offline or Network connection is very poor!!!");
+        return;
+      }
+      let data = await fetch("/api/razorpay", {
+        method: "POST",
+        body: JSON.stringify({ target: targetSubscriber }),
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      data = await data.json();
+      var _options = {
+        key: "rzp_test_H8wSfzlHwPBLL8", // Enter the Key ID generated from the Dashboard
+
+        name: "GrowwTen",
+        description: "Youtube Subscription",
+        image: Logo.src,
+        amount: data.amount,
+        order_id: data.id,
+        currency: data.currency,
+        handler: async function (response) {
+          console.log(response.razorpay_payment_id);
+          console.log(response.razorpay_order_id);
+          console.log(response.razorpay_signature);
+          await updateDoc(doc(db, "wallets", referralCode), {
+            referralEarning: increment(30),
+          });
+          await addDoc(collection(db, "tasks"), {
+            clientId: userInfo.id,
+            target: Number(targetSubscriber),
+            type: "YOUTUBE SUBSCRIBE",
+            url: link,
+            completed: 0,
+            isCompleted: false,
+            price: 0.6 * Number(targetSubscriber),
+            createdAt: serverTimestamp(),
+            referralCode,
+          });
+
+          alert.success("Added successfully");
+          setLoading1(false);
+
+          await getClientTasks();
+          setShowAddTaskModal(false);
+        },
+        prefill: {
+          name: userInfo.displayName,
+          email: userInfo.email,
+          // contact: userInfo.phoneNo,
+        },
+        notes: {
+          address: "GrowwTen",
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const paymentObject = new window.Razorpay(_options);
+      paymentObject.open();
+      paymentObject.on("payment.failed", function (response) {
+        console.log(response.error.code);
+        console.log(response.error.description);
+        console.log(response.error.source);
+        console.log(response.error.step);
+        console.log(response.error.reason);
+        console.log(response.error.metadata.order_id);
+        console.log(response.error.metadata.payment_id);
+        alert.success("Payment Failed");
+        setLoading1(false);
+
+        // await getClientTasks();
+        setShowAddTaskModal(false);
+      });
+    } catch (e) {}
+  };
+
   const alert = useAlert();
 
   const {
@@ -33,6 +154,56 @@ const AddTaskModal = ({ getClientTasks }) => {
   const [link, setlink] = useState("");
   const [targetSubscriber, setTargetSubscriber] = useState("");
   const [referralCode, setReferralCode] = useState("");
+
+  const [rzp1, setRzp1] = useState();
+  const [options, setOptions] = useState("");
+  useEffect(() => {
+    // displayRazorPay();
+  }, []);
+  // useEffect(() => {
+  //   var _options = {
+  //     key: "", // Enter the Key ID generated from the Dashboard
+  //     amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+  //     currency: "INR",
+  //     name: "GrowwTen",
+  //     description: "Youtube Subscription",
+  //     image: Logo.src,
+  //     order_id: "order_9A33XWu170gUt", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+  //     handler: function (response) {
+  //       alert(response.razorpay_payment_id);
+  //       alert(response.razorpay_order_id);
+  //       alert(response.razorpay_signature);
+  //     },
+  //     prefill: {
+  //       name: userInfo.displayName,
+  //       email: userInfo.email,
+  //       contact: userInfo.phoneNo,
+  //     },
+  //     notes: {
+  //       address: "GrowwTen",
+  //     },
+  //     theme: {
+  //       color: "#3399cc",
+  //     },
+  //   };
+  //   setOptions(_options);
+  // }, [price]);
+  // useEffect(() => {
+  //   var rzp = new Razorpay(options);
+  //   setRzp1(rzp);
+  // }, [options]);
+  // useEffect(() => {
+  //   rzp1.on("payment.failed", function (response) {
+  //     alert(response.error.code);
+  //     alert(response.error.description);
+  //     alert(response.error.source);
+  //     alert(response.error.step);
+  //     alert(response.error.reason);
+  //     alert(response.error.metadata.order_id);
+  //     alert(response.error.metadata.payment_id);
+  //   });
+  // }, [rzp1]);
+
   const refferalCodeExist = async () => {
     if (referralCode.includes("/")) {
       return;
@@ -56,35 +227,8 @@ const AddTaskModal = ({ getClientTasks }) => {
   };
   const addTask = async (e) => {
     e.preventDefault();
-    setLoading1(true);
-    const isValid = await checkYoutubeLink();
-    if (!isValid) {
-      alert.error("You have entered the wrong youtube channel link :(");
-      setLoading1(false);
-      return;
-    }
-    if (referralCode) {
-      if (!(await refferalCodeExist())) {
-        alert.error("You have entered the wrong Refferal Code :(");
-        setLoading1(false);
-        return;
-      }
-    }
-    await addDoc(collection(db, "tasks"), {
-      clientId: userInfo.id,
-      target: Number(targetSubscriber),
-      type: "YOUTUBE SUBSCRIBE",
-      url: link,
-      completed: 0,
-      isCompleted: false,
-      price: 0.6 * Number(targetSubscriber),
-      createdAt: serverTimestamp(),
-      referralCode,
-    });
-    setLoading1(false);
-    alert.success("Added successfully");
-    await getClientTasks();
-    setShowAddTaskModal(false);
+
+    await displayRazorPay();
   };
   return (
     <div className="container modal fixed md:top-1/2 top-1/2 left-1/2 bg-white   z-50 transform -translate-y-1/2 -translate-x-1/2 rounded-md  md:p-7 p-6  shadow-2xl border-textDark w-min">

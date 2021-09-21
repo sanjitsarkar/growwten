@@ -66,9 +66,7 @@ const UserBody = () => {
               title="Wallet"
               textColor="text-white"
               bgColor="bg-tertiary"
-            >
-              <h1 className="text-white text-center text-3xl">0</h1>
-            </Card>
+            ></Card>
           </>
         )}
       </div>

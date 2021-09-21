@@ -10,6 +10,7 @@ import { auth, db } from "../lib/firebase";
 import Dashboard from "../components/dashboard";
 import _Loader from "../components/Loader";
 import {
+  addDoc,
   doc,
   FieldValue,
   getDoc,
@@ -72,6 +73,10 @@ const Home = () => {
       setShowLoginModal(true);
     }
   }, [_referralCode]);
+  const [type, setType] = useState("");
+  useEffect(() => {
+    setType(window.localStorage.getItem("type"));
+  }, [type]);
   const addUserInfo = useCallback(
     async (type, user, referralCode) => {
       setDone(false);
@@ -131,7 +136,13 @@ const Home = () => {
             teamCount: 1,
           };
         }
-
+        if (type === "USER") {
+          await setDoc(doc(db, "wallets", user.uid), {
+            referralEarning: 0,
+            selfEarning: 0,
+            withdrawlAmount: 0,
+          });
+        }
         await setDoc(doc(db, collectionName, user.uid), userInfo);
         if (referralCode !== "") {
           await updateDoc(doc(db, collectionName, referralCode), {
@@ -147,7 +158,7 @@ const Home = () => {
   useEffect(() => {
     // console.log(user, "user", "uinfo", userInfo);
     if (!loading && user && userInfo === "")
-      addUserInfo(loginAs, user, referralCode);
+      addUserInfo(type, user, referralCode);
   }, [user]);
 
   // useEffect(() => {

@@ -38,13 +38,14 @@ const Tasks = () => {
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [type, setType] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const alert = useAlert();
   const [taskMode, setTaskMode] = useState("PENDING");
+  const [type, setType] = useState("");
   useEffect(() => {
     setType(window.localStorage.getItem("type"));
   }, [type]);
+
   useEffect(() => {
     if (showAlert) {
       alert.error("You are signing out as your session has been expired.");
@@ -176,6 +177,9 @@ const Tasks = () => {
             await updateDoc(doc(db, "tasks", _doc.id), {
               completed: increment(1),
             });
+            //               await updateDoc(doc(db, "wallets", ), {
+            // selfEarning: increment(_doc.price/),
+            //       });
           } else {
           }
         }
