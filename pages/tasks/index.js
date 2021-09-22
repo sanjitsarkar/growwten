@@ -33,7 +33,7 @@ import { auth, db } from "../../lib/firebase";
 import { AuthContext } from "../../lib/store/AuthStore";
 import { UtilityContext } from "../../lib/store/UtiltyStore";
 const Tasks = () => {
-  const { loading, user, userInfo } = useContext(AuthContext);
+  const { loading, user, userInfo, setUserInfo } = useContext(AuthContext);
   const { showAddTaskModal, setShowAddTaskModal } = useContext(UtilityContext);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -79,6 +79,14 @@ const Tasks = () => {
       return data.pageInfo.totalResults;
     } catch (e) {
       console.log(e);
+      setUserInfo("");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("type");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("cred");
+      localStorage.removeItem("result");
       await auth.signOut();
       setShowAlert(true);
       return 0;
@@ -140,7 +148,7 @@ const Tasks = () => {
   };
   const getUserTasks = async () => {
     // let _tasks = [];
-    // console.log("client");
+    console.log("userrrr");
     setLoading1(true);
     const dataSnap = await getDocs(
       query(
@@ -153,7 +161,10 @@ const Tasks = () => {
     );
 
     // console.log("dataSnapSSSS", dataSnap.docs);
-
+    const data = await getDoc(doc(db, "pricing", "youtube_subscription"));
+    let amountPerUser = data.data().amountDistributionPerUser;
+    // const walletInfo = await getDoc(doc(db, "wallets", userInfo.id));
+    let amountFinal = 0;
     Promise.all(
       dataSnap.docs.map(async (_doc) => {
         const urlArray = _doc.data().url.split("/");
@@ -162,30 +173,40 @@ const Tasks = () => {
         const _data = await isTaskDone(_doc.id);
         let isSubscribed = await _isSubscribed(channelId);
         console.log("isSubscribe", isSubscribed, "channelId", channelId);
+
         if (!isSubscribed && _data) {
           console.log("_data and not subscibed", _data);
-
+          amountFinal -= amountPerUser;
+          // await axios.post("/api/taskearning", {
+          //   id: userInfo.id,
+          //   taskId: _doc.id,
+          //   type: _doc.type,
+          //   action: "decrement",
+          // });
           await deleteDoc(doc(db, `users/${userInfo.id}/tasks`, _doc.id));
           await updateDoc(doc(db, "tasks", _doc.id), {
             completed: increment(-1),
           });
         } else if (!_data) {
           if (isSubscribed) {
+            amountFinal += amountPerUser;
             await setDoc(doc(db, `users/${userInfo.id}/tasks`, _doc.id), {
               status: true,
             });
             await updateDoc(doc(db, "tasks", _doc.id), {
               completed: increment(1),
             });
-            //               await updateDoc(doc(db, "wallets", ), {
-            // selfEarning: increment(_doc.price/),
-            //       });
           } else {
           }
         }
+        console.log("amountFinal", amountFinal);
+
         return { ..._doc.data(), isSubscribed };
       })
-    ).then((__data) => {
+    ).then(async (__data) => {
+      await updateDoc(doc(db, "wallets", userInfo.id), {
+        selfEarning: increment(amountFinal),
+      });
       if (taskMode === "PENDING") {
         setTasks(() => __data.filter((_task) => _task.isSubscribed === 0));
       } else setTasks(() => __data.filter((_task) => _task.isSubscribed === 1));
@@ -196,7 +217,7 @@ const Tasks = () => {
   useEffect(() => {
     if (type === "USER") getUserTasks();
     if (type === "CLIENT" && userInfo) getClientTasks();
-  }, [type, userInfo, taskMode]);
+  }, [userInfo, taskMode]);
 
   // const openWindow = (url) => {
   //   const __window = window.open(url, "_blank", true, true, true, 300, 500);

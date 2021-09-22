@@ -28,7 +28,10 @@ const UserHeader = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("type");
-    sessionStorage.removeItem("isLoggedIn", true);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("cred");
+    localStorage.removeItem("result");
 
     await auth.signOut();
     console.log("logout suc");

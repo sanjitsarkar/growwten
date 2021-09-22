@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import _Loader from "../../components/Loader";
 import UserHeader from "../../components/UserHeader";
 import { AuthContext } from "../../lib/store/AuthStore";
-import Money from "../../components/Images/money.svg";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 const Wallet = () => {
@@ -15,8 +14,7 @@ const Wallet = () => {
     setWalletInfo(data.data());
   };
   useEffect(() => {
-    if(user) getWalletInfo();
-    
+    if (user) getWalletInfo();
   }, []);
   useEffect(() => {
     if ((!loading && user === null) || userInfo === null) {
@@ -50,7 +48,7 @@ const Wallet = () => {
               <h2>₹{walletInfo.referralEarning}</h2>
             </div>
           </div>
-          <div className="rounded-md bg-youtube text-white p-7 text-center w-full">
+          <div className="rounded-md bg-darkerBlue text-white p-7 text-center w-full">
             <h1>Total Balance</h1>
             <h2>₹{walletInfo.referralEarning + walletInfo.selfEarning}</h2>
           </div>

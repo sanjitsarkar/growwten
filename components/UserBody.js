@@ -3,9 +3,11 @@ import { useContext, useEffect, useState } from "react";
 import { db } from "../lib/firebase";
 import { AuthContext } from "../lib/store/AuthStore";
 import Card from "./Card";
+import _Loader from "./Loader";
 
 const UserBody = () => {
   const { user, userInfo } = useContext(AuthContext);
+
   // const [taskCount, setTaskCount] = useState(0);
   // const getTaskCount = async () => {
   //   const dataSnap = await getDocs(

@@ -74,80 +74,87 @@ const Home = () => {
     }
   }, [_referralCode]);
   const [type, setType] = useState("");
-  useEffect(() => {
-    setType(window.localStorage.getItem("type"));
-  }, [type]);
+
   const addUserInfo = useCallback(
-    async (type, user, referralCode) => {
+    async (user, referralCode) => {
+      const type = window.localStorage.getItem("type");
       setDone(false);
       console.log("called1");
       let collectionName = "";
-      if (type === USER) collectionName = "users";
-      else if (type === CLIENT) collectionName = "clients";
-      else collectionName = "admins";
+      if (type === "USER") collectionName = "users";
+      else collectionName = "clients";
+
+      console.log("type", type);
+      console.log("collectionName", collectionName);
       const info = await getDoc(doc(db, collectionName, user.uid));
 
       if (!info.exists()) {
         let userInfo;
-        if (loginAs === CLIENT) {
+        if (type === "CLIENT") {
           userInfo = {
-            type,
+            type: "CLIENT",
             displayName: user.displayName,
             email: user.email,
             createdAt: serverTimestamp(),
             photoURL: user.photoURL,
-            referralCode,
+            address: "",
+            phoneNo: "",
+            dob: "",
             tasks: 0,
           };
           await setDoc(doc(db, collectionName, user.uid), userInfo);
           return;
-        }
-        if (referralCode !== "") {
-          const referrer = await getDoc(doc(db, collectionName, referralCode));
-          setReferrerInfo({ ...referrer.data(), id: referrer.id });
-
-          userInfo = {
-            type,
-            referralCode,
-            isCompleted: false,
-            displayName: user.displayName,
-            email: user.email,
-            dob: "",
-            createdAt: serverTimestamp(),
-            photoURL: user.photoURL,
-            teamCount: 1,
-            phoneNo: "",
-            address: "",
-            teamNo: referrer.data().teamNo + 1,
-          };
         } else {
-          userInfo = {
-            type,
-            isCompleted: false,
+          if (referralCode !== "") {
+            const referrer = await getDoc(
+              doc(db, collectionName, referralCode)
+            );
+            setReferrerInfo({ ...referrer.data(), id: referrer.id });
 
-            address: "",
-            referralCode,
-            dob: "",
-            phoneNo: "",
-            displayName: user.displayName,
-            email: user.email,
-            createdAt: serverTimestamp(),
-            photoURL: user.photoURL,
-            teamCount: 1,
-          };
-        }
-        if (type === "USER") {
-          await setDoc(doc(db, "wallets", user.uid), {
-            referralEarning: 0,
-            selfEarning: 0,
-            withdrawlAmount: 0,
-          });
-        }
-        await setDoc(doc(db, collectionName, user.uid), userInfo);
-        if (referralCode !== "") {
-          await updateDoc(doc(db, collectionName, referralCode), {
-            teamCount: increment(1),
-          });
+            userInfo = {
+              type,
+              referralCode,
+              isCompleted: false,
+              displayName: user.displayName,
+              email: user.email,
+              dob: "",
+              createdAt: serverTimestamp(),
+              photoURL: user.photoURL,
+              teamCount: 1,
+              phoneNo: "",
+              address: "",
+              teamNo: referrer.data().teamNo + 1,
+            };
+          } else {
+            userInfo = {
+              type,
+              isCompleted: false,
+
+              address: "",
+              referralCode,
+              dob: "",
+              phoneNo: "",
+              displayName: user.displayName,
+              email: user.email,
+              createdAt: serverTimestamp(),
+              photoURL: user.photoURL,
+              teamCount: 1,
+            };
+          }
+
+          if (type === USER) {
+            await setDoc(doc(db, "wallets", user.uid), {
+              referralEarning: 0,
+              selfEarning: 0,
+              withdrawlAmount: 0,
+            });
+          }
+          await setDoc(doc(db, collectionName, user.uid), userInfo);
+          if (referralCode !== "") {
+            await updateDoc(doc(db, collectionName, referralCode), {
+              teamCount: increment(1),
+            });
+          }
         }
         setDone(true);
       }
@@ -157,8 +164,7 @@ const Home = () => {
 
   useEffect(() => {
     // console.log(user, "user", "uinfo", userInfo);
-    if (!loading && user && userInfo === "")
-      addUserInfo(type, user, referralCode);
+    if (!loading && user && userInfo === "") addUserInfo(user, referralCode);
   }, [user]);
 
   // useEffect(() => {

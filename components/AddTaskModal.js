@@ -6,6 +6,7 @@ import {
   getDocs,
   increment,
   serverTimestamp,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { useContext, useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import { AuthContext } from "../lib/store/AuthStore";
 import { UtilityContext } from "../lib/store/UtiltyStore";
 import _Loader from "./Loader";
 import Logo from "../components/Images/growwten.svg";
+import axios from "axios";
 
 function loadScript(src) {
   return new Promise((resolve) => {
@@ -44,9 +46,10 @@ const AddTaskModal = ({ getClientTasks }) => {
         setLoading1(false);
         return;
       }
-
+      let exist = false;
       if (referralCode) {
-        if (!(await refferalCodeExist())) {
+        exist = await refferalCodeExist();
+        if (!exist) {
           alert.error("You have entered the wrong Refferal Code :(");
           setLoading1(false);
           return;
@@ -60,7 +63,7 @@ const AddTaskModal = ({ getClientTasks }) => {
         alert("You are offline or Network connection is very poor!!!");
         return;
       }
-      let data = await fetch("/api/razorpay", {
+      let _data = await fetch("/api/razorpay", {
         method: "POST",
         body: JSON.stringify({ target: targetSubscriber }),
         headers: {
@@ -68,25 +71,117 @@ const AddTaskModal = ({ getClientTasks }) => {
           // 'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      data = await data.json();
+      _data = await _data.json();
       var _options = {
         key: "rzp_test_H8wSfzlHwPBLL8", // Enter the Key ID generated from the Dashboard
 
         name: "GrowwTen",
         description: "Youtube Subscription",
         image: Logo.src,
-        amount: data.amount,
-        order_id: data.id,
-        currency: data.currency,
+        amount: _data.amount,
+        order_id: _data.id,
+        currency: _data.currency,
         handler: async function (response) {
-          console.log(response.razorpay_payment_id);
-          console.log(response.razorpay_order_id);
-          console.log(response.razorpay_signature);
-          await updateDoc(doc(db, "wallets", referralCode), {
-            referralEarning: increment(30),
+          // console.log(response.razorpay_payment_id);
+          // console.log(response.razorpay_order_id);
+          // console.log(response.razorpay_signature);
+          const totalAmount = _data.amount / 100;
+          const data = await getDoc(doc(db, "pricing", "youtube_subscription"));
+          if (exist) {
+            await updateDoc(doc(db, "wallets", referralCode), {
+              referralEarning: increment(
+                (totalAmount * data.data().referralPercentage) / 100
+              ),
+            });
+            const result = await getDoc(doc(db, "users", referralCode));
+            if (result.data().teamNo === 1) {
+              await updateDoc(doc(db, "wallets", result.data().referralCode), {
+                referralEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage) /
+                    100
+                ),
+              });
+            } else if (result.data().teamNo === 2) {
+              await updateDoc(doc(db, "wallets", result.data().referralCode), {
+                referralEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage) /
+                    2 /
+                    100
+                ),
+              });
+              const result1 = await getDoc(
+                doc(db, "users", result.data().referralCode)
+              );
+
+              await updateDoc(doc(db, "wallets", result1.data().referralCode), {
+                referralEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage) /
+                    2 /
+                    100
+                ),
+              });
+            } else if (result.data().teamNo === 3) {
+              await updateDoc(doc(db, "wallets", result.data().referralCode), {
+                referralEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage) /
+                    2 /
+                    100
+                ),
+              });
+              const result1 = await getDoc(
+                doc(db, "users", result.data().referralCode)
+              );
+              await updateDoc(doc(db, "wallets", result1.data().referralCode), {
+                referralEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage) /
+                    4 /
+                    100
+                ),
+              });
+              const result2 = await getDoc(
+                doc(db, "users", result1.data().referralCode)
+              );
+              await updateDoc(doc(db, "wallets", result2.data().referralCode), {
+                referralEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage) /
+                    4 /
+                    100
+                ),
+              });
+            }
+          } else {
+            await updateDoc(
+              doc(db, "wallets", "GjEKpoUitjbmVfjmUE3hk1LELAE2"),
+              {
+                directEarning: increment(
+                  (totalAmount *
+                    data.data().totalReferralDistributionPercentage *
+                    2) /
+                    100
+                ),
+              }
+            );
+            // await axios.post("/api/referralearning", {
+            //   id: referralCode,
+            //   isReferral: false,
+            //   type: "YOUTUBE SUBSCRIBE",
+
+            //   totalAmount: data.amount,
+            // });
+          }
+          await updateDoc(doc(db, "clients", userInfo.id), {
+            tasks: increment(1),
           });
-          await addDoc(collection(db, "tasks"), {
+          await setDoc(doc(db, "tasks", response.razorpay_order_id), {
             clientId: userInfo.id,
+            paymentId: response.razorpay_payment_id,
+            paymentSignature: response.razorpay_signature,
             target: Number(targetSubscriber),
             type: "YOUTUBE SUBSCRIBE",
             url: link,
@@ -106,7 +201,6 @@ const AddTaskModal = ({ getClientTasks }) => {
         prefill: {
           name: userInfo.displayName,
           email: userInfo.email,
-          // contact: userInfo.phoneNo,
         },
         notes: {
           address: "GrowwTen",
