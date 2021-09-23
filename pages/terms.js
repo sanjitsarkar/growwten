@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../lib/store/AuthStore";
-const terms = () => {
+const Terms = () => {
   const { loading, user, userInfo } = useContext(AuthContext);
   const router = useRouter();
 
@@ -390,4 +390,4 @@ const terms = () => {
   );
 };
 
-export default terms;
+export default Terms;

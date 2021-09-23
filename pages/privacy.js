@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../lib/store/AuthStore";
-const privacy = () => {
+const Privacy = () => {
   const { loading, user, userInfo } = useContext(AuthContext);
   const router = useRouter();
 
@@ -444,4 +444,4 @@ const privacy = () => {
   );
 };
 
-export default privacy;
+export default Privacy;
