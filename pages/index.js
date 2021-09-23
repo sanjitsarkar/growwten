@@ -176,13 +176,15 @@ const Home = () => {
   useEffect(() => {
     console.log(loading);
   }, [loading]);
+  // useEffect(() => {
+  //   console.log("api_key", process.env.NEXT_PUBLIC_API_KEY);
+  // }, []);
 
   if ((!loading && user && userInfo) || done)
     return <Dashboard user={userInfo} />;
   if (!loading && !user)
     return (
       <>
-        {showLoginModal && <LoginModal />}
         <Header />
         <HeroSection />
         <WhyUsSection />

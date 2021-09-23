@@ -1,12 +1,11 @@
 import { positions, Provider as AlertProvider, transitions } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import { AuthProvider } from "../lib/store/AuthStore";
-import { UtilityProvider } from "../lib/store/UtiltyStore";
+import { UtilityContext, UtilityProvider } from "../lib/store/UtiltyStore";
 import Head from "next/head";
 import "../styles/globals.css";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { auth } from "../lib/firebase";
-import axios from "axios";
 function MyApp({ Component, pageProps }) {
   const logout = async () => {
     localStorage.removeItem("token");

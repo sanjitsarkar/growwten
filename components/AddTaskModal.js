@@ -73,7 +73,7 @@ const AddTaskModal = ({ getClientTasks }) => {
       });
       _data = await _data.json();
       var _options = {
-        key: "rzp_test_H8wSfzlHwPBLL8", // Enter the Key ID generated from the Dashboard
+        key: process.env.API_KEY, // Enter the Key ID generated from the Dashboard
 
         name: "GrowwTen",
         description: "Youtube Subscription",

@@ -4,8 +4,8 @@ import Razorpay from "razorpay";
 import shortid from "shortid";
 import { db } from "../../lib/firebase";
 const razorpay = new Razorpay({
-  key_id: "rzp_test_H8wSfzlHwPBLL8",
-  key_secret: "qe9gPLhVrcRHbvd9P1wvnd8p",
+  key_id: process.env.KEY,
+  key_secret: process.env.KEY_SECRET,
 });
 export default async function handler(req, res) {
   if (req.method === "POST") {

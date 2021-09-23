@@ -1,7 +1,17 @@
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-
+import { useRouter } from "next/dist/client/router";
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../lib/store/AuthStore";
 const terms = () => {
+  const { loading, user, userInfo } = useContext(AuthContext);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user && userInfo) {
+      router.push("/");
+    }
+  }, [userInfo, user, loading]);
   return (
     <>
       <Header />
