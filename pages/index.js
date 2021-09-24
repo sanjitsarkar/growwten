@@ -120,7 +120,7 @@ const Home = () => {
               dob: "",
               createdAt: serverTimestamp(),
               photoURL: user.photoURL,
-              teamCount: 1,
+              teamCount: 0,
               phoneNo: "",
               address: "",
               teamNo: referrer.data().teamNo + 1,
@@ -138,7 +138,7 @@ const Home = () => {
               email: user.email,
               createdAt: serverTimestamp(),
               photoURL: user.photoURL,
-              teamCount: 1,
+              teamCount: 0,
             };
           }
 

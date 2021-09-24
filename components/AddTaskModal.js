@@ -60,7 +60,7 @@ const AddTaskModal = ({ getClientTasks }) => {
         "https://checkout.razorpay.com/v1/checkout.js"
       );
       if (!res) {
-        alert("You are offline or Network connection is very poor!!!");
+        alert.error("You are offline or Network connection is very poor!!!");
         return;
       }
       let _data = await fetch("/api/razorpay", {
@@ -85,7 +85,7 @@ const AddTaskModal = ({ getClientTasks }) => {
           // console.log(response.razorpay_payment_id);
           // console.log(response.razorpay_order_id);
           // console.log(response.razorpay_signature);
-          const totalAmount = _data.amount / 100;
+          const totalAmount = _data.amountFee;
           const data = await getDoc(doc(db, "pricing", "youtube_subscription"));
           if (exist) {
             await updateDoc(doc(db, "wallets", referralCode), {
@@ -220,7 +220,7 @@ const AddTaskModal = ({ getClientTasks }) => {
         console.log(response.error.reason);
         console.log(response.error.metadata.order_id);
         console.log(response.error.metadata.payment_id);
-        alert.success("Payment Failed");
+        alert.error("Payment Failed");
         setLoading1(false);
 
         // await getClientTasks();
@@ -249,10 +249,15 @@ const AddTaskModal = ({ getClientTasks }) => {
   const [targetSubscriber, setTargetSubscriber] = useState("");
   const [referralCode, setReferralCode] = useState("");
 
-  const [rzp1, setRzp1] = useState();
-  const [options, setOptions] = useState("");
+  const [rate, setRate] = useState();
+  const [transactionFee, setTransactionFee] = useState();
+  const getRate = async () => {
+    const data = await getDoc(doc(db, "pricing", "youtube_subscription"));
+    setRate(data.data().rate);
+    setTransactionFee(data.data().transactionFee);
+  };
   useEffect(() => {
-    // displayRazorPay();
+    getRate();
   }, []);
   // useEffect(() => {
   //   var _options = {
@@ -373,6 +378,29 @@ const AddTaskModal = ({ getClientTasks }) => {
             setReferralCode(e.target.value);
           }}
         />
+        <div className="text-textDark grid gap-2 ">
+          <h3 className="font-medium">
+            Price{" "}
+            <span className="text-textDark text-opacity-90 font-normal">
+              {(targetSubscriber * rate).toFixed(2)}
+            </span>
+          </h3>
+          <h3 className="font-medium">
+            Transaction Fee{" "}
+            <span className="text-textDark text-opacity-90 font-normal">
+              {((targetSubscriber * rate * transactionFee) / 100).toFixed(2)}{" "}
+            </span>
+          </h3>
+          <h3 className="font-medium">
+            Total price{" "}
+            <span className="text-textDark text-opacity-90 font-normal">
+              {(
+                targetSubscriber * rate +
+                (targetSubscriber * rate * transactionFee) / 100
+              ).toFixed(2)}
+            </span>
+          </h3>
+        </div>
         {loading1 ? (
           <_Loader />
         ) : (

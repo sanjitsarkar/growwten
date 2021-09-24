@@ -16,7 +16,9 @@ export default async function handler(req, res) {
     const data = await getDoc(doc(db, "pricing", "youtube_subscription"));
 
     const options = {
-      amount: target * data.data().rate * 100,
+      amount:
+        (target * data.data().rate +
+        ((target * data.data().rate * data.data().transactionFee) / 100)) * 100,
       currency: "INR",
       receipt: shortid.generate(),
       payment_capture: 1,
@@ -26,6 +28,7 @@ export default async function handler(req, res) {
       res.json({
         id: response.id,
         amount: response.amount,
+        amountFee:target * data.data().rate,
         currency: response.currency,
       });
     } catch (e) {

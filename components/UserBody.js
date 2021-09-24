@@ -59,7 +59,7 @@ const UserBody = () => {
               bgColor="bg-primary"
             >
               <h1 className="text-white text-center text-3xl">
-                {userInfo.teamCount && userInfo.teamCount - 1}
+                {userInfo.teamCount && userInfo.teamCount }
               </h1>
             </Card>
             <Card
