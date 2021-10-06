@@ -35,7 +35,7 @@ import { UtilityContext } from "../../lib/store/UtiltyStore";
 const Tasks = () => {
   const { loading, user, userInfo, setUserInfo } = useContext(AuthContext);
   const { showAddTaskModal, setShowAddTaskModal } = useContext(UtilityContext);
-  const [loading1, setLoading1] = useState(false);
+  const [loading1, setLoading1] = useState(true);
   const [loading2, setLoading2] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
@@ -132,7 +132,7 @@ const Tasks = () => {
 
   const getClientTasks = async () => {
     // console.log("clled client");
-    setLoading1(true);
+    // setLoading1(true);
     const dataSnap = await getDocs(
       query(
         collection(db, "tasks"),
@@ -149,7 +149,7 @@ const Tasks = () => {
   const getUserTasks = async () => {
     // let _tasks = [];
     console.log("userrrr");
-    setLoading1(true);
+    // setLoading1(true);
     const dataSnap = await getDocs(
       query(
         collection(db, "tasks"),
@@ -214,9 +214,9 @@ const Tasks = () => {
       setLoading1(false);
     });
   };
-  useEffect(() => {
-    if (type === "USER") getUserTasks();
-    if (type === "CLIENT" && userInfo) getClientTasks();
+  useEffect(async () => {
+    if (type === "USER") await getUserTasks();
+    if (type === "CLIENT" && userInfo) await getClientTasks();
   }, [userInfo, taskMode]);
 
   // const openWindow = (url) => {

@@ -361,6 +361,7 @@ const AddTaskModal = ({ getClientTasks }) => {
         <input
           required
           min="1000"
+          max="1110"
           className="bg-secondary bg-opacity-5 px-3 py-1.5  rounded-md placeholder-gray-500 outline-none md:w-auto w-min"
           type="number"
           placeholder="Enter Target Subsriber"
